@@ -12,6 +12,8 @@ let transporter = nodemailer.createTransport({
     }
 });
 
+
+
 const sendMailToRegister = (userMail, token) => {
 
     let mailOptions = {
