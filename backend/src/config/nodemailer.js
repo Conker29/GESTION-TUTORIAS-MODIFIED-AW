@@ -11,7 +11,8 @@ let transporter = nodemailer.createTransport({
         pass: process.env.PASS_MAILTRAP,
     }
 });
-//hola emilio 
+//hola emilio como estas
+
 
 const sendMailToRegister = (userMail, token) => {
 
