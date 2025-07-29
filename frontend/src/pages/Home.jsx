@@ -28,13 +28,13 @@ export const Home = () => {
                     href="#" 
                     className='
                         block                   
-                        bg-blue-900             
+                        bg-red-900             
                         w-32                    {/* Ancho ligeramente más pequeño para la cabecera */}
                         py-2                    
                         text-white              
                         rounded-2xl             
                         text-center             
-                        hover:bg-red-800       
+                        hover:bg-black       
                         transition-colors duration-300 
                     '
                 >
