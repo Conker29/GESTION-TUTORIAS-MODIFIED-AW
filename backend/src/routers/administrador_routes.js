@@ -7,6 +7,7 @@ import {
         perfilAdministrador, 
         actualizarPerfilAdministrador, 
         actualizarPasswordAdministrador} from '../controllers/administrador_controller.js'
+import { loginOAuthAdministrador } from "../controllers/sesion_google_correo_controller.js"; // Nueva importación del controlador para OAuth
 import { verificarTokenJWT } from '../middlewares/JWT.js'
 
 const routerAdministrador = Router()
@@ -22,6 +23,9 @@ routerAdministrador.get('/recuperarpassword/:token', comprobarTokenPasswordAdmin
 routerAdministrador.post('/nuevopassword/:token',crearNuevoPasswordAdministrador)
 
 routerAdministrador.post ('/login',loginAdministrador)
+
+// Nueva ruta para login con OAuth (Google, Microsoft)
+routerAdministrador.post('/oauth', loginOAuthAdministrador);
 
 //Rutas privadas
 routerAdministrador.get('/perfil',verificarTokenJWT,perfilAdministrador)
