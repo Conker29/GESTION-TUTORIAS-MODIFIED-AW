@@ -7,9 +7,10 @@ import fondoEstudiantes from '../assets/estudiantes-fondo.jpg';
 
 export const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, haandleSubmit, formState: { errors } } = useForm();
 
     const registro = async (data) => {
+        data.rol = "Estudiante"
         try {
             const url = `${import.meta.env.VITE_BACKEND_URL}/estudiante/registro`;
             const respuesta = await axios.post(url, data);
@@ -38,33 +39,21 @@ export const Register = () => {
                             type="text"
                             placeholder="Ingresa tu nombre"
                             className="w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-2 px-3 text-gray-600"
-                            {...register("nombre", { required: "El nombre es obligatorio" })}
+                            {...register("nombreEstudiante", { required: "El nombre es obligatorio" })}
                         />
-                        {errors.nombre && <p className="text-red-800 text-sm mt-1">{errors.nombre.message}</p>}
-                    </div>
-
-                    {/* Apellido */}
-                    <div>
-                        <label className="block text-sm font-semibold mb-1">Apellido</label>
-                        <input
-                            type="text"
-                            placeholder="Ingresa tu apellido"
-                            className="w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-2 px-3 text-gray-600"
-                            {...register("apellido", { required: "El apellido es obligatorio" })}
-                        />
-                        {errors.apellido && <p className="text-red-800 text-sm mt-1">{errors.apellido.message}</p>}
+                        {errors.nombreEstudiante && <p className="text-red-800 text-sm mt-1">{errors.nombreEstudiante.message}</p>}
                     </div>
 
                     {/* Celular */}
                     <div>
-                        <label className="block text-sm font-semibold mb-1">Celular</label>
+                        <label className="block text-sm font-semibold mb-1">Teléfono</label>
                         <input
                             type="text"
                             placeholder="Ingresa tu celular"
                             className="w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-2 px-3 text-gray-600"
-                            {...register("celular", { required: "El celular es obligatorio" })}
+                            {...register("telefono", { required: "El celular es obligatorio" })}
                         />
-                        {errors.celular && <p className="text-red-800 text-sm mt-1">{errors.celular.message}</p>}
+                        {errors.telefono && <p className="text-red-800 text-sm mt-1">{errors.telefono.message}</p>}
                     </div>
 
                     {/* Correo electrónico */}
@@ -74,9 +63,9 @@ export const Register = () => {
                             type="email"
                             placeholder="Ingresa tu correo electrónico"
                             className="w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-2 px-3 text-gray-600"
-                            {...register("email", { required: "El correo electrónico es obligatorio" })}
+                            {...register("emailEstudiante", { required: "El correo electrónico es obligatorio" })}
                         />
-                        {errors.email && <p className="text-red-800 text-sm mt-1">{errors.email.message}</p>}
+                        {errors.emailEstudiante && <p className="text-red-800 text-sm mt-1">{errors.emailEstudiante.message}</p>}
                     </div>
 
                     {/* Contraseña */}
