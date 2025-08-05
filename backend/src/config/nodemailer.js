@@ -78,26 +78,6 @@ const sendMailToOwner = async(userMail,password)=>{
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
 
-//Enviar correo de confirmacion de cuenta a los docentes
-const sendMailToOwner = async(userMail,password)=>{
-    let info = await transporter.sendMail({
-    from: 'tutorias.esfot@gmail.com',
-    to: userMail,
-    subject: "Registro del docente en la plataforma",
-    html: `
-    <h1>Tutorias ESFOT</h1>
-    <hr>
-    <p>La plataforma le da la más cordial bienvenida a la plataforma. Sus credenciales otorgadas son las siguientes:</p>
-    <p>Correo electrónico: ${userMail}</p>
-    <p>Contraseña de acceso: ${password}</p>
-    <a href=${process.env.URL_FRONTEND}login>Haz clic en el siguiente enlace para iniciar sesión</a>
-    <hr>
-    <footer>2025 - TUTORIAS ESFOT - Todos los derechos reservados.</footer>
-    `
-    });
-    console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
-}
-
 const sendMailWithCredentials = async (email, nombreAdministrador, password) => {
   try {
     let mailOptions = {
@@ -133,4 +113,5 @@ export {
     sendMailToOwner,
     sendMailWithCredentials
 }
+
 
