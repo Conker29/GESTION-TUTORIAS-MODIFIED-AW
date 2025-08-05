@@ -10,16 +10,17 @@ const registrarAdministrador = async () => {
     const admin = await Administrador.findOne({ email: "danna.lopez@epn.edu.ec" });
 
     if (!admin) {
+	const passwordGenerada = "Admin12345678$"
         const nuevoAdmin = new Administrador({
             nombreAdministrador: "Danna",
             email: "danna.lopez@epn.edu.ec",
-            password: await new Administrador().encrypPassword("Admin12345678$"),
+            password: await new Administrador().encrypPassword(passwordGenerada),
             confirmEmail: true,
         });
         await nuevoAdmin.save();
         console.log("Administrador registrado con éxito.");
         //Enviar correo al administrador con las credenciales generadas por el equipo de desarrollo
-        await sendMailWithCredentials(nuevoAdmin.email, nuevoAdmin.nombreAdministrador, nuevoAdmin.password);
+        await sendMailWithCredentials(nuevoAdmin.email, nuevoAdmin.nombreAdministrador, passwordGenerada);
     } else {
         console.log("El administrador ya se encuentra registrado en la base de datos.");
     }
@@ -193,6 +194,7 @@ export {
     actualizarPerfilAdministrador,
     actualizarPasswordAdministrador
 }
+
 
 
 
