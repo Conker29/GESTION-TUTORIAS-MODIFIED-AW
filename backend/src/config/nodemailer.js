@@ -89,7 +89,7 @@ const sendMailWithCredentials = async (email, nombreAdministrador, password) => 
         <h2 style="color: #81180aff; font-weight: bold;">¡Bienvenido/a, ${nombreAdministrador}!</h2>
         <p style="font-size: 16px; color: #333;">Tus credenciales para acceder a tu perfil de administrador en la plataforma son las siguientes:</p>
         <p><strong>Correo electrónico:</strong> ${email}</p>
-        <p><strong>Contraseña:</strong> ${password}</p>
+        <p><strong>Contraseña:</strong> ${passwordGenerada}</p>
         <p>Por favor, cambia tu contraseña en tu primer inicio de sesión para mayor seguridad.</p>
         <hr style="border: 0; border-top: 1px solid #424040ff; margin: 20px 0;">
         <footer style="font-size: 12px; color: #999;">
@@ -113,5 +113,6 @@ export {
     sendMailToOwner,
     sendMailWithCredentials
 }
+
 
 
