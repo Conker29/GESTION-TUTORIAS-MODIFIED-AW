@@ -19,7 +19,7 @@ const registrarAdministrador = async () => {
         await nuevoAdmin.save();
         console.log("Administrador registrado con éxito.");
         //Enviar correo al administrador con las credenciales generadas por el equipo de desarrollo
-        await sendMailWithCredentials(nuevoAdmin.email, nuevoAdmin.nombreAdministrador, password);
+        await sendMailWithCredentials(nuevoAdmin.email, nuevoAdmin.nombreAdministrador, nuevoAdmin.password);
     } else {
         console.log("El administrador ya se encuentra registrado en la base de datos.");
     }
@@ -193,5 +193,6 @@ export {
     actualizarPerfilAdministrador,
     actualizarPasswordAdministrador
 }
+
 
 
