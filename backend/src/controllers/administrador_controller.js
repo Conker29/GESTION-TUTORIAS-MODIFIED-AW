@@ -1,31 +1,9 @@
 import Administrador from "../models/administrador.js"
-import {sendMailToRegister, sendMailToRecoveryPassword} from "../config/nodemailer.js"
+import {sendMailToRecoveryPassword} from "../config/nodemailer.js"
+import { v2 as cloudinary } from 'cloudinary'
+import fs from "fs-extra"
 import { crearTokenJWT } from "../middlewares/JWT.js"
 import mongoose from "mongoose" 
-
-/*const registroAdministrador = async (req,res)=>{
-    const {email,password} = req.body
-    if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Todos los campos son obligatorios."})
-    const verificarEmailBDD = await Administrador.findOne({email})
-    if(verificarEmailBDD) return res.status(400).json({msg:"Lo sentimos, el email ya se encuentra registrado"})
-    const nuevoAdministrador = new Administrador(req.body)
-    nuevoAdministrador.password = await nuevoAdministrador.encrypPassword(password)
-    const token = nuevoAdministrador.crearToken()
-    await sendMailToRegister(email,token)
-    await nuevoAdministrador.save()
-    res.status(200).json({msg:"Revisa tu correo electrónico para confirmar tu cuenta"})
-}
-
-const confirmarMailAdministrador = async (req,res)=>{
-    if(!(req.params.token)) return res.status(400).json({msg:"Lo sentimos, no se puede validar la cuenta"})
-    const administradorBDD = await Administrador.findOne({token:req.params.token})
-    if(!administradorBDD?.token) return res.status(404).json({msg:"La cuenta ya ha sido confirmada"})
-    administradorBDD.token = null
-    administradorBDD.confirmEmail=true
-    await administradorBDD.save()
-    res.status(200).json({msg:"Token confirmado, ya puedes iniciar sesión"}) 
-}
-*/
 
 //Etapa 1
 const registrarAdministrador = async () => {
@@ -138,27 +116,60 @@ const perfilAdministrador =(req,res)=>{
     res.status(200).json(datosPerfil);
 }
 
-const actualizarPerfilAdministrador = async (req,res)=>{
-    const {id} = req.params
-    const {nombreAdministrador,email} = req.body
-    if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, debe ser un id válido`});
-    if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"});
-    const administradorBDD = await Administrador.findById(id)
-    if(!administradorBDD) return res.status(404).json({msg:`Lo sentimos, no existe el Administrador ${id}`})
-    if (administradorBDD.email != email)
-    {
-        const administradorBDDMail = await Administrador.findOne({email})
-        if (administradorBDDMail)
-        {
-            return res.status(404).json({msg:`Lo sentimos, el email existe ya se encuentra registrado`})  
-        }
+const actualizarPerfilAdministrador = async (req, res) => {
+  const { id } = req.params;
+  const { nombreAdministrador, email } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ msg: `Lo sentimos, debe ser un id válido` });
+  }
+
+  const administradorBDD = await Administrador.findById(id);
+  if (!administradorBDD) {
+    return res.status(404).json({ msg: `Lo sentimos, no existe el Administrador ${id}` });
+  }
+
+  // Validar y actualizar el email si es nuevo
+  if (email && administradorBDD.email !== email) {
+    const administradorBDDMail = await Administrador.findOne({ email });
+    if (administradorBDDMail) {
+      return res.status(400).json({ msg: `El email ya está registrado por otro administrador` });
     }
-        administradorBDD.nombreAdministrador = nombreAdministrador ?? administradorBDD.nombreAdministrador
-        administradorBDD.email = email ?? administradorBDD.email
-        await administradorBDD.save()
-        console.log(administradorBDD)
-        res.status(200).json(administradorBDD)
-}
+    administradorBDD.email = email;
+  }
+
+  // Actualizar nombre si se envía
+  if (nombreAdministrador) {
+    administradorBDD.nombreAdministrador = nombreAdministrador;
+  }
+
+  // Subir imagen si se envía
+  if (req.files?.imagen) {
+    // Si ya tiene una imagen previa, eliminarla de Cloudinary
+    if (administradorBDD.fotoPerfilID) {
+      await cloudinary.uploader.destroy(administradorBDD.fotoPerfilID);
+    }
+
+    const { secure_url, public_id } = await cloudinary.uploader.upload(
+      req.files.imagen.tempFilePath,
+      { folder: "Administradores" }
+    );
+
+    administradorBDD.fotoPerfil = secure_url;
+    administradorBDD.fotoPerfilID = public_id;
+
+    // Eliminar archivo temporal
+    await fs.unlink(req.files.imagen.tempFilePath);
+  }
+
+  await administradorBDD.save();
+
+  res.status(200).json({
+    msg: "Perfil actualizado con éxito",
+    administrador: administradorBDD
+  });
+};
+
 
 const actualizarPasswordAdministrador = async (req,res)=>{
     const administradorBDD = await Administrador.findById(req.administradorBDD._id)
