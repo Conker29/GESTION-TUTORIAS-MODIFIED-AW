@@ -78,8 +78,59 @@ const sendMailToOwner = async(userMail,password)=>{
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
 
+//Enviar correo de confirmacion de cuenta a los docentes
+const sendMailToOwner = async(userMail,password)=>{
+    let info = await transporter.sendMail({
+    from: 'tutorias.esfot@gmail.com',
+    to: userMail,
+    subject: "Registro del docente en la plataforma",
+    html: `
+    <h1>Tutorias ESFOT</h1>
+    <hr>
+    <p>La plataforma le da la más cordial bienvenida a la plataforma. Sus credenciales otorgadas son las siguientes:</p>
+    <p>Correo electrónico: ${userMail}</p>
+    <p>Contraseña de acceso: ${password}</p>
+    <a href=${process.env.URL_FRONTEND}login>Haz clic en el siguiente enlace para iniciar sesión</a>
+    <hr>
+    <footer>2025 - TUTORIAS ESFOT - Todos los derechos reservados.</footer>
+    `
+    });
+    console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
+}
+
+const sendMailWithCredentials = async (email, nombreAdministrador, password) => {
+  try {
+    let mailOptions = {
+      from: 'Equipo de Desarrollo <no-reply@gmail.com>',
+      to: email,
+      subject: "Credenciales de acceso a la plataforma de tutorías",
+      html: `
+      <div style="font-family: Verdana, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; padding: 20px; text-align: center;">
+        <h2 style="color: #81180aff; font-weight: bold;">¡Bienvenido/a, ${nombreAdministrador}!</h2>
+        <p style="font-size: 16px; color: #333;">Tus credenciales para acceder a tu perfil de administrador en la plataforma son las siguientes:</p>
+        <p><strong>Correo electrónico:</strong> ${email}</p>
+        <p><strong>Contraseña:</strong> ${password}</p>
+        <p>Por favor, cambia tu contraseña en tu primer inicio de sesión para mayor seguridad.</p>
+        <hr style="border: 0; border-top: 1px solid #424040ff; margin: 20px 0;">
+        <footer style="font-size: 12px; color: #999;">
+          <p>&copy; 2025 ESFOT Tutorías. Todos los derechos reservados.</p>
+        </footer>
+      </div>
+      `
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
+
+  } catch (error) {
+    console.log("Error enviando correo con credenciales:", error);
+  }
+}
+
 export {
     sendMailToRegister,
     sendMailToRecoveryPassword,
-    sendMailToOwner
+    sendMailToOwner,
+    sendMailWithCredentials
 }
+
