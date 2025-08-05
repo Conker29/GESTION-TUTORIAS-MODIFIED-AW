@@ -1,5 +1,5 @@
 import Administrador from "../models/administrador.js"
-import {sendMailToRecoveryPassword} from "../config/nodemailer.js"
+import {sendMailToRecoveryPassword, sendMailWithCredentials} from "../config/nodemailer.js"
 import { v2 as cloudinary } from 'cloudinary'
 import fs from "fs-extra"
 import { crearTokenJWT } from "../middlewares/JWT.js"
@@ -13,16 +13,19 @@ const registrarAdministrador = async () => {
         const nuevoAdmin = new Administrador({
             nombreAdministrador: "Danna",
             email: "danna.lopez@epn.edu.ec",
-            password: await new Administrador().encrypPassword("dannamishelle23"),
+            password: await new Administrador().encrypPassword("Admin12345678$"),
             confirmEmail: true,
         });
         await nuevoAdmin.save();
         console.log("Administrador registrado con éxito.");
+        //Enviar correo al administrador con las credenciales generadas por el equipo de desarrollo
+        await sendMailWithCredentials(nuevoAdmin.email, nuevoAdmin.nombreAdministrador, passwordGenerada);
     } else {
         console.log("El administrador ya se encuentra registrado en la base de datos.");
     }
 };
 
+//Etapa 2
 const recuperarPasswordAdministrador = async(req, res) => {
     //Primera validacion: Obtener el email 
     const {email} = req.body
@@ -190,3 +193,4 @@ export {
     actualizarPerfilAdministrador,
     actualizarPasswordAdministrador
 }
+
