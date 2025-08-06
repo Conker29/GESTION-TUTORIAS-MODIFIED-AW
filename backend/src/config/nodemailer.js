@@ -42,20 +42,41 @@ const sendMailToRegister = (userMail, token) => {
     })
     }
 
-const sendMailToRecoveryPassword = async(userMail,token)=>{
-    let info = await transporter.sendMail({
-    from: 'tutorias.esfot@gmail.com',
+const sendMailToRecoveryPassword = async (userMail, token) => {
+  let info = await transporter.sendMail({
+    from: '"Equipo de Desarrollo <no_reply@gmail.com>',
     to: userMail,
-    subject: "Correo para restablecer tu contraseña",
+    subject: "Restablecimiento de contraseña - Tutorías ESFOT",
     html: `
-    <h1>PLATAFORMA DE GESTION DE TUTORIAS😎</h1>
-    <hr>
-    <a href=${process.env.URL_FRONTEND}reset/${token}>Haz clic para reestablecer tu contraseña</a>
-    <hr>
-    <footer>2025 - TUTORIAS ESFOT - Todos los derechos reservados.</footer>
+    <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px; padding: 20px;">
+      <header style="text-align: center; margin-bottom: 20px;">
+        <h2 style="color: #751b0bff;">Plataforma de Gestión de Tutorías - ESFOT</h2>
+      </header>
+
+      <main>
+        <p>Estimado/a usuario/a,</p>
+        <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en la plataforma de Tutorías ESFOT.</p>
+        
+        <p style="margin-top: 20px; text-align: center;">
+          <a href="${process.env.URL_FRONTEND}reset/${token}" 
+             style="display: inline-block; background-color: #112c3fff; color: #fff; padding: 12px 20px; text-decoration: none; border-radius: 5px;">
+            Restablecer contraseña
+          </a>
+        </p>
+
+        <p style="margin-top: 30px;">Si no realizaste esta solicitud, puedes ignorar este mensaje.</p>
+      </main>
+
+      <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;">
+
+      <footer style="text-align: center; font-size: 12px; color: #aaa;">
+        © 2025 - Tutorías ESFOT. Todos los derechos reservados.
+      </footer>
+    </div>
     `
-    });
-    console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
+  });
+
+  console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
 
 //Enviar correo de confirmacion de cuenta a los docentes
@@ -113,6 +134,7 @@ export {
     sendMailToOwner,
     sendMailWithCredentials
 }
+
 
 
 
