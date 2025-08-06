@@ -44,40 +44,50 @@ const sendMailToRegister = (userMail, token) => {
 
 const sendMailToRecoveryPassword = async (userMail, token) => {
   let info = await transporter.sendMail({
-    from: 'Equipo de Desarrollo <no_reply@gmail.com>',
+    from: 'Tutorías ESFOT <tutorias.esfot@gmail.com>',
     to: userMail,
-    subject: "Restablecimiento de contraseña - Tutorías ESFOT",
+    subject: "Solicitud para restablecer tu contraseña",
     html: `
-    <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px; padding: 20px;">
-      <header style="text-align: center; margin-bottom: 20px;">
-        <h2 style="color: #751b0bff;">Plataforma de Gestión de Tutorías - ESFOT</h2>
-      </header>
+    <div style="font-family: 'Segoe UI', sans-serif; background-color: #f9f9f9; padding: 30px;">
+      <div style="max-width: 600px; margin: auto; background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
 
-      <main>
-        <p>Estimado/a usuario/a,</p>
-        <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en la plataforma de Tutorías ESFOT.</p>
-        
-        <p style="margin-top: 20px; text-align: center;">
+        <h2 style="color: #1c3d5a; text-align: center; margin-bottom: 20px;">
+          Plataforma de Gestión de Tutorías - ESFOT
+        </h2>
+
+        <p style="font-size: 15px; color: #333;">
+          Hola, hemos recibido una solicitud para <strong>restablecer la contraseña</strong> de tu cuenta en la plataforma de Tutorías ESFOT.
+        </p>
+
+        <p style="font-size: 15px; color: #333;">
+          Si realizaste esta solicitud, haz clic en el siguiente enlace:
+        </p>
+
+        <p style="text-align: center; margin: 25px 0;">
           <a href="${process.env.URL_FRONTEND}reset/${token}" 
-             style="display: inline-block; background-color: #112c3fff; color: #fff; padding: 12px 20px; text-decoration: none; border-radius: 5px;">
-            Restablecer contraseña
+             style="color: #234c83ff; text-decoration: underline; font-weight: bold;" 
+             target="_blank">
+            Restablecer Contraseña
           </a>
         </p>
 
-        <p style="margin-top: 30px;">Si no realizaste esta solicitud, puedes ignorar este mensaje.</p>
-      </main>
+        <p style="font-size: 14px; color: #666;">
+          Si tú no realizaste esta solicitud, puedes ignorar este correo. No se realizará ningún cambio sin tu autorización.
+        </p>
 
-      <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;">
+        <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;" />
 
-      <footer style="text-align: center; font-size: 12px; color: #aaa;">
-        © 2025 - Tutorías ESFOT. Todos los derechos reservados.
-      </footer>
+        <p style="text-align: center; font-size: 12px; color: #999;">
+          © 2025 Tutorías ESFOT. Todos los derechos reservados.
+        </p>
+
+      </div>
     </div>
     `
   });
 
-  console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
-}
+  console.log("Correo de restablecimiento enviado con éxito");
+};
 
 //Enviar correo de confirmacion de cuenta a los docentes
 const sendMailToOwner = async(userMail,password)=>{
@@ -135,3 +145,4 @@ export {
     sendMailToOwner,
     sendMailWithCredentials
 }
+
