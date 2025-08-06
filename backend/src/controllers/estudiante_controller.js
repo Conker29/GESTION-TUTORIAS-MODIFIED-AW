@@ -107,7 +107,8 @@ const loginEstudiante = async (req, res) => {
     return res.status(401).json({ msg: "Debe confirmar su cuenta antes de iniciar sesión." });
   }
 
-  //Validar que la contraseña del usuario sea la misma de la BDD  const verificarPassword = await estudianteBDD.matchPassword(password);
+  //Validar que la contraseña del usuario sea la misma de la BDD  
+  const verificarPassword = await estudianteBDD.matchPassword(password);
   if (!verificarPassword) {
     return res.status(401).json({ msg: "Lo sentimos, la contraseña es incorrecta." });
   }
@@ -194,3 +195,4 @@ export {
     actualizarPerfilEstudiante,
     actualizarPasswordEstudiante
 }
+
