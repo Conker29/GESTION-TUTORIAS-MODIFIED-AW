@@ -44,7 +44,7 @@ const sendMailToRegister = (userMail, token) => {
 
 const sendMailToRecoveryPassword = async (userMail, token) => {
   let info = await transporter.sendMail({
-    from: '"Equipo de Desarrollo <no_reply@gmail.com>',
+    from: 'Equipo de Desarrollo <no_reply@gmail.com>',
     to: userMail,
     subject: "Restablecimiento de contraseña - Tutorías ESFOT",
     html: `
@@ -96,7 +96,7 @@ const sendMailToOwner = async(userMail,password)=>{
     <footer>2025 - TUTORIAS ESFOT - Todos los derechos reservados.</footer>
     `
     });
-    console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
+    console.log("Mensaje enviado con éxito al docente: ", info.messageId);
 }
 
 const sendMailWithCredentials = async (email, nombreAdministrador, passwordGenerada) => {
@@ -121,12 +121,13 @@ const sendMailWithCredentials = async (email, nombreAdministrador, passwordGener
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
+    console.log("Mensaje enviado con éxito.");
 
   } catch (error) {
     console.log("Error enviando correo con credenciales:", error);
   }
 }
+
 
 export {
     sendMailToRegister,
@@ -134,8 +135,3 @@ export {
     sendMailToOwner,
     sendMailWithCredentials
 }
-
-
-
-
-
