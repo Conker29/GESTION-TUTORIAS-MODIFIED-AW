@@ -78,7 +78,7 @@ const sendMailToOwner = async(userMail,password)=>{
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
 
-const sendMailWithCredentials = async (email, nombreAdministrador, password) => {
+const sendMailWithCredentials = async (email, nombreAdministrador, passwordGenerada) => {
   try {
     let mailOptions = {
       from: 'Equipo de Desarrollo <no-reply@gmail.com>',
@@ -113,6 +113,7 @@ export {
     sendMailToOwner,
     sendMailWithCredentials
 }
+
 
 
 
