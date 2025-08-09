@@ -7,7 +7,7 @@ import fondoEstudiantes from '../assets/estudiantes-fondo.jpg';
 
 export const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
-    const { register, haandleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, formState: { errors } } = useForm();
 
     const registro = async (data) => {
         data.rol = "Estudiante"
@@ -16,7 +16,7 @@ export const Register = () => {
             const respuesta = await axios.post(url, data);
             toast.success(respuesta.data.msg);
         } catch (error) {
-            toast.error(error.response.data.msg)
+            toast.error(error.response?.data?.msg || "Error en el registro");
         }
     };
 
@@ -25,11 +25,13 @@ export const Register = () => {
             className="relative min-h-screen w-full bg-cover bg-center flex items-center justify-center"
             style={{ backgroundImage: `url(${fondoEstudiantes})` }}
         >
+            {/* Overlay */}
             <div className="absolute inset-0 bg-black opacity-70 z-0"></div>
 
-            <div className="w-full relative z-10 bg-white bg-opacity-90 p-10 rounded-xl shadow-2xl max-w-3xl">
+            {/* Contenedor blanco ajustado */}
+            <div className="relative z-10 bg-white bg-opacity-90 p-10 rounded-xl shadow-2xl w-full max-w-md mx-4">
                 <ToastContainer />
-                <h1 className="text-3xl font-semibold mb-8 text-center uppercase text-red-900">Plataforma de Registro</h1>
+                <h1 className="text-3xl font-semibold mb-8 text-center text-red-900">Registrarse</h1>
 
                 <form onSubmit={handleSubmit(registro)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Nombre */}
@@ -57,15 +59,15 @@ export const Register = () => {
                     </div>
 
                     {/* Correo electrónico */}
-                    <div>
-                        <label className="block text-sm font-semibold mb-1">Correo electrónico</label>
-                        <input
-                            type="email"
-                            placeholder="Ingresa tu correo electrónico"
-                            className="w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-2 px-3 text-gray-600"
-                            {...register("emailEstudiante", { required: "El correo electrónico es obligatorio" })}
-                        />
-                        {errors.emailEstudiante && <p className="text-red-800 text-sm mt-1">{errors.emailEstudiante.message}</p>}
+                    <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold mb-1">Correo electrónico</label>
+                    <input
+                        type="email"
+                        placeholder="Ingresa tu correo electrónico"
+                        className="w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-2 px-3 text-gray-600"
+                        {...register("emailEstudiante", { required: "El correo electrónico es obligatorio" })}
+                    />
+                     {errors.emailEstudiante && <p className="text-red-800 text-sm mt-1">{errors.emailEstudiante.message}</p>}
                     </div>
 
                     {/* Contraseña */}
@@ -107,8 +109,11 @@ export const Register = () => {
 
                 <div className="mt-6 text-xs border-b-2 py-3"></div>
                 <div className="mt-4 text-sm flex justify-between items-center">
+                    <p className="text-center sm:text-left">
+                        ¿Ya estás registrado?
+                    </p>
                     <Link to="/login" className="underline py-2 px-5 text-black hover:scale-110 duration-300">
-                        ¿Ya tienes una cuenta? Inicia sesión
+                        Iniciar sesión
                     </Link>
                 </div>
             </div>
