@@ -30,11 +30,7 @@ export const Home = () => {
                     className='
                         block                   
                         bg-red-900             
-<<<<<<< HEAD
                         w-32        
-=======
-                        w-32                    {/* Ancho ligeramente más pequeño para la cabecera */}
->>>>>>> 3c794791b03dba7db6f48e2d5c4e7d2a56d46f9b
                         py-2                    
                         text-white              
                         rounded-2xl             
@@ -162,8 +158,9 @@ export const Home = () => {
             <footer className='text-center bg-gray-50 p-6 sm:px-20 sm:py-10 mt-20 rounded-tr-3xl rounded-tl-3xl space-y-8'>
 
                 <div className='flex justify-between items-center'>
+        
                     <div className='text-left'>
-                    <p className='text-3xl font-extrabold text-amber-800'>Contacto</p>
+                    <p className='text-3xl font-extrabold text-red-900'>Contacto</p>
                     <p className='text-xl my-4'>Para cualquier duda o comentario, envía un email a: tutorias.esfot@gmail.com</p>
                     </div>
                     <ul className='flex gap-4'>
