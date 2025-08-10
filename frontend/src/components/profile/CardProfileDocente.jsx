@@ -1,6 +1,6 @@
 import storeProfile from "../../context/storeProfile"
 import { useState } from "react"
-import { FaUserCircle } from "react-icons/fa"
+import { FaUserCircle, FaEnvelope, FaPhoneAlt, FaChalkboardTeacher, FaCalendarAlt, FaIdCard, FaSchool, FaBuilding } from "react-icons/fa"
 import { MdEdit } from "react-icons/md"
 
 export const CardProfileDocente = () => {
@@ -17,22 +17,19 @@ export const CardProfileDocente = () => {
         setSelectedFile(null)
     }
 
-    // Corregido el formateo de fecha para evitar el error de zona horaria
     const formatDate = (dateString) => {
         if (!dateString) return "No disponible"
         const date = new Date(dateString)
-        // Usar UTC para evitar el cambio de día por la zona horaria
         const day = String(date.getUTCDate()).padStart(2, '0')
         const month = String(date.getUTCMonth() + 1).padStart(2, '0')
         const year = date.getUTCFullYear()
-        return `${year}-${month}-${day}` // Formato YYYY-MM-DD para una mejor legibilidad
+        return `${year}-${month}-${day}`
     }
 
     return (
-        <div className="bg-white border border-gray-200 shadow-lg rounded-lg p-6 max-w-md mx-auto my-8 flex flex-col items-center">
+        <div className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-lg hover:shadow-2xl transition-shadow duration-300 rounded-2xl p-8 max-w-lg mx-auto my-8 flex flex-col items-center relative">
             
-            {/* Contenedor de la foto de perfil dentro de la tarjeta */}
-            <div className="relative w-40 h-40 mb-6 border-4 border-white rounded-full overflow-hidden shadow-md">
+            <div className="relative w-40 h-40 mb-6 border-4 border-gray-300 rounded-full overflow-hidden shadow-lg">
                 {user.avatarDocente ? (
                     <img
                         src={user.avatarDocente}
@@ -40,11 +37,10 @@ export const CardProfileDocente = () => {
                         className="object-cover w-full h-full"
                     />
                 ) : (
-                    <FaUserCircle className="text-gray-400 w-full h-full" />
+                    <FaUserCircle className="text-gray-400 w-full h-full p-4" />
                 )}
             </div>
 
-            {/* Sección de edición de foto */}
             <div className="text-center mb-6">
                 <input
                     type="file"
@@ -55,7 +51,7 @@ export const CardProfileDocente = () => {
                 />
                 <label
                     htmlFor="file-upload"
-                    className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                    className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 transition-colors"
                 >
                     <MdEdit className="mr-2 h-4 w-4" />
                     Seleccionar Foto
@@ -63,7 +59,7 @@ export const CardProfileDocente = () => {
                 {selectedFile && (
                     <button
                         onClick={handleUpload}
-                        className="ml-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+                        className="ml-2 px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 transition-colors disabled:opacity-50"
                         disabled={!selectedFile}
                     >
                         Subir Foto
@@ -71,19 +67,40 @@ export const CardProfileDocente = () => {
                 )}
             </div>
 
-            {/* Separador visual */}
-            <div className="w-full border-t border-gray-300 mb-6"></div>
+            <h2 className="text-4xl font-extrabold text-gray-800 mb-2">{user.nombreDocente}</h2>
+            <p className="text-sm font-light text-gray-500 mb-6">Docente de la ESFOT</p>
 
-            {/* Información del docente */}
-            <div className="space-y-4 text-left w-full">
-                <p className="text-gray-700 text-lg"><b className="font-semibold text-gray-900">Nombre:</b> {user.nombreDocente}</p>
-                <p className="text-gray-700"><b className="font-semibold text-gray-900">Fecha de nacimiento:</b> {formatDate(user.fechaNacimientoDocente)}</p>
-                <p className="text-gray-700"><b className="font-semibold text-gray-900">Cédula:</b> {user.cedulaDocente}</p>
-                <p className="text-gray-700"><b className="font-semibold text-gray-900">Email:</b> {user.emailDocente}</p>
-                <p className="text-gray-700"><b className="font-semibold text-gray-900">Email Alternativo:</b> {user.emailAlternativoDocente}</p>
-                <p className="text-gray-700"><b className="font-semibold text-gray-900">Celular:</b> {user.celularDocente}</p>
-                <p className="text-gray-700"><b className="font-semibold text-gray-900">Semestre Asignado:</b> {user.semestreAsignado}</p>
-                <p className="text-gray-700"><b className="font-semibold text-gray-900">Asignaturas:</b> {user.asignaturas}</p>
+            <div className="w-full border-t border-gray-200 my-4"></div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full text-gray-700">
+                <div className="flex items-center space-x-2">
+                    <FaCalendarAlt className="text-gray-500" />
+                    <p><b>Fecha de Nacimiento:</b> {formatDate(user.fechaNacimientoDocente)}</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <FaIdCard className="text-gray-500" />
+                    <p><b>Cédula:</b> {user.cedulaDocente}</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <FaBuilding className="text-gray-500" />
+                    <p><b>Oficina:</b> {user.oficinaDocente}</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <FaEnvelope className="text-gray-500" />
+                    <p><b>Email:</b> {user.emailDocente}</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <FaPhoneAlt className="text-gray-500" />
+                    <p><b>Celular:</b> {user.celularDocente}</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <FaSchool className="text-gray-500" />
+                    <p><b>Semestre Asignado:</b> {user.semestreAsignado}</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <FaChalkboardTeacher className="text-gray-500" />
+                    <p><b>Asignaturas:</b> {user.asignaturas}</p>
+                </div>
             </div>
         </div>
     )
