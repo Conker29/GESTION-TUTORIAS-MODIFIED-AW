@@ -19,9 +19,12 @@ const administradorSchema = new Schema({
       return !this.isOAuth; // solo requerido si no es OAuth
     }
   },
-  fotoPerfil: {
+  fotoPerfilAdmin: {
     type: String,
     default: "https://cdn-icons-png.flaticon.com/512/4715/4715329.png"  //Enviar un icono por defecto
+  },
+  fotoPerfilAdminID: { // ID de Cloudinary para poder eliminarla/reemplazarla
+    type: String
   },
   status: {
     type: Boolean,
