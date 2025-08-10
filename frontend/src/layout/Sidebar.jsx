@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router'
 import storeProfile from '../context/storeProfile'
 
-const Sidebar = ({ setMenuVisible }) => {
+const Slidebar = ({ setMenuVisible }) => {
   const location = useLocation()
   const urlActual = location.pathname
   const { user } = storeProfile()
@@ -20,7 +20,7 @@ const Sidebar = ({ setMenuVisible }) => {
         height={120}
       />
       <p className="text-slate-400 text-center my-4 text-sm">
-        <span className="bg-green-600 w-3 h-3 inline-block rounded-full"></span> Bienvenido - {user?.nombreAdministrador || user?.nombreDocente}
+        <span className="bg-green-600 w-3 h-3 inline-block rounded-full"></span> Bienvenido - {user?.nombreAdministrador || user?.nombreDocente || user?.nombreEstudiante}
       </p>
       <p className="text-slate-400 text-center my-4 text-sm">Rol - {user?.rol}</p>
       <hr className="mt-5 border-slate-500" />
@@ -50,4 +50,4 @@ const Sidebar = ({ setMenuVisible }) => {
   )
 }
 
-export default Sidebar
+export default Slidebar
