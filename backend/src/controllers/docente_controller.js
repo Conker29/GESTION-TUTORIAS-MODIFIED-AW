@@ -132,11 +132,12 @@ const loginDocente = async(req,res)=>{
     const verificarPassword = await docenteBDD.matchPassword(passwordDocente)
     if(!verificarPassword) return res.status(404).json({msg:"Lo sentimos, el password no es el correcto"})
     const token = crearTokenJWT(docenteBDD._id,docenteBDD.rol)
-	  const {_id,rol} = docenteBDD
+	  const {_id,rol, avatarDocente} = docenteBDD
     res.status(200).json({
         token,
         rol,
-        _id
+        _id,
+        avatarDocente
     })
 }
 
@@ -149,7 +150,7 @@ const perfilDocente = (req, res) => {
     const camposAEliminar = [
         "fechaIngresoDocente", "salidaDocente",
         "estadoDocente", "passwordDocente", 
-        "avatarDocente","avatarDocenteID", "confirmEmail", "createdAt", "updatedAt", "__v"
+        "confirmEmail", "createdAt", "updatedAt", "__v"
     ]
     camposAEliminar.forEach(campo => delete req.docenteBDD[campo])
     res.status(200).json(req.docenteBDD)
@@ -163,5 +164,4 @@ export{
     actualizarDocente,
     loginDocente,
     perfilDocente
-
 }
