@@ -2,6 +2,8 @@ import Estudiante from "../models/estudiante.js"
 import {sendMailToRegister, sendMailToRecoveryPassword} from "../config/nodemailer.js"
 import { crearTokenJWT } from "../middlewares/JWT.js"
 import mongoose from "mongoose" 
+import cloudinary from "cloudinary";
+import fs from "fs-extra";
 
 const registroEstudiante = async (req,res)=>{
     const {emailEstudiante,password} = req.body
@@ -123,38 +125,55 @@ const loginEstudiante = async (req, res) => {
     apellido,
     telefono,
     _id,
-    emailEstudiante
+    emailEstudiante,
+	fotoPerfil
   });
 };
 
+//Metodo para que el estudiante pueda ver su perfil
 const perfilEstudiante =(req,res)=>{
-		const {token,confirmEmail,createdAt,updatedAt,__v,...datosPerfil} = req.estudianteBDD
+	const {token,confirmEmail,createdAt,updatedAt,__v,...datosPerfil} = req.estudianteBDD
     res.status(200).json(datosPerfil);
 }
 
-const actualizarPerfilEstudiante = async (req,res)=>{
-    const {id} = req.params
-    const {nombre,apellido,oficina,celular,email} = req.body
-    if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, debe ser un id válido`});
-    if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"});
-    const estudianteBDD = await Estudiante.findById(id)
-    if(!estudianteBDD) return res.status(404).json({msg:`Lo sentimos, no existe el estudiante ${id}`})
-    if (estudianteBDD.email != email)
-    {
-        const estudianteBDDMail = await estudiante.findOne({email})
-        if (estudianteBDDMail)
-        {
-            return res.status(404).json({msg:`Lo sentimos, el email existe ya se encuentra registrado`})  
-        }
+const actualizarPerfilEstudiante = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ msg: "Lo sentimos, debe ser un id válido" });
+  }
+
+  const estudianteBDD = await Estudiante.findById(id);
+  if (!estudianteBDD) {
+    return res.status(404).json({ msg: `No existe el estudiante ${id}` });
+  }
+
+  // Subir imagen si se envía
+  if (req.files?.imagen) {
+    if (estudianteBDD.fotoPerfilID) {
+      await cloudinary.uploader.destroy(estudianteBDD.fotoPerfilID);
     }
-        estudianteBDD.nombre = nombre ?? estudianteBDD.nombre
-        estudianteBDD.apellido = apellido ?? estudianteBDD.apellido
-        estudianteBDD.celular = celular ?? estudianteBDD.celular
-        estudianteBDD.email = email ?? estudianteBDD.email
-        await estudianteBDD.save()
-        console.log(estudianteBDD)
-        res.status(200).json(estudianteBDD)
-}
+
+    const { secure_url, public_id } = await cloudinary.uploader.upload(
+      req.files.imagen.tempFilePath,
+      { folder: "Estudiantes" }
+    );
+
+    estudianteBDD.fotoPerfil = secure_url;
+    estudianteBDD.fotoPerfilID = public_id;
+
+    await fs.unlink(req.files.imagen.tempFilePath);
+  } else {
+    return res.status(400).json({ msg: "No se envió ninguna imagen" });
+  }
+
+  await estudianteBDD.save();
+
+  res.status(200).json({
+    msg: "Foto actualizada con éxito",
+    estudiante: estudianteBDD
+  });
+};
 
 const actualizarPasswordEstudiante = async (req,res)=>{
     const estudianteBDD = await Estudiante.findById(req.estudianteBDD._id)
@@ -195,4 +214,5 @@ export {
     actualizarPerfilEstudiante,
     actualizarPasswordEstudiante
 }
+
 
