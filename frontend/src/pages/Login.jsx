@@ -9,21 +9,44 @@ import storeAuth from "../context/storeAuth";
 const Login = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const [rolSeleccionado, setRolSeleccionado] = useState('Administrador'); 
   const [showPassword, setShowPassword] = useState(false);
   const { fetchDataBackend } = useFetch();
   const { setToken, setRol } = storeAuth();
 
   const loginUser = async (data) => {
-    const url = data.password.includes("ESFOT")
-      ? `${import.meta.env.VITE_BACKEND_URL}/docente/login`
-      : `${import.meta.env.VITE_BACKEND_URL}/login`;
-    const response = await fetchDataBackend(url, data, "POST", null);
+    let url = ''
+    let body = {}
+    // Si la contraseña incluye "ESFOT", forzar que sea docente (ignorar selector rol)
+    if (data.password.includes("ESFOT") && rolSeleccionado === 'Docente') {
+      url = `${import.meta.env.VITE_BACKEND_URL}/docente/login`;
+      body = {
+        email: data.email,  
+        password: data.password
+      };
+    } else {
+      if (rolSeleccionado === 'Administrador') {
+        url = `${import.meta.env.VITE_BACKEND_URL}/login`;
+        body = {
+          email: data.email,  
+          password: data.password
+        };
+      } else if (rolSeleccionado === 'Estudiante') {
+        url = `${import.meta.env.VITE_BACKEND_URL}/estudiante/login`;
+        body = {
+          emailEstudiante: data.email,  
+          password: data.password
+    };
+      }
+    }
+    const response = await fetchDataBackend(url, body, "POST", null);
     if (response) {
       setToken(response.token);
-      setRol(response.rol);
-      navigate("/dashboard");
-    }
-  };
+      const rolFinal = data.password.includes("ESFOT") ? 'Docente' : rolSeleccionado;
+      setRol(rolFinal);
+      navigate('/dashboard'); 
+      }
+    };
 
   return (
     <div
@@ -57,7 +80,7 @@ const Login = () => {
           Ingrese sus credenciales para continuar
         </p>
 
-        {/* Formulario para el inicio de sesión */}
+        {/* Formulario */}
         <form onSubmit={handleSubmit(loginUser)} className="space-y-5">
           {/* Email */}
           <div>
@@ -119,7 +142,23 @@ const Login = () => {
           {errors.password && <p className="text-red-600 mt-1 text-sm">{errors.password.message}</p>}
         </div>
 
-          {/* ¿Olvidaste contraseña? */}
+        {/* Selector de rol */}
+        <div>
+          <label className="block mb-1 text-sm font-semibold text-gray-700">
+            Seleccione su rol *
+          </label>
+          <select
+            className="block w-full rounded-lg border py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-800 transition-all border-gray-300"
+            value={rolSeleccionado}
+            onChange={(e) => setRolSeleccionado(e.target.value)}
+          >
+            <option value="Estudiante">Estudiante</option>
+            <option value="Docente">Docente</option>
+            <option value="Administrador">Administrador</option>
+          </select>
+        </div>
+
+          {/* Texto "Olvidaste contraseña" */}
           <div className="text-right text-sm mb-3">
             <Link to="/forgot/id" className="text-gray-700 hover:text-red-900 transition-colors font-medium">
               ¿Olvidaste tu contraseña?
@@ -135,7 +174,7 @@ const Login = () => {
           </button>
         </form>
 
-        {/* Enlaces adicionales */}
+        {/* Enlaces adicionales con mejor separación y diseño */}
         <div className="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
           <p className="text-center sm:text-left">
             ¿No tienes una cuenta todavía?
