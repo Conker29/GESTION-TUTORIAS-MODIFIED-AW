@@ -1,11 +1,23 @@
 import storeProfile from "../../context/storeProfile";
+import { useState } from "react";
 
 const CardProfileEstudiante = () => {
-  const { user } = storeProfile();
+  const { user, updatePhotoProfile } = storeProfile();
+   const [selectedFile, setSelectedFile] = useState(null);
 
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+
+    // Llamamos a la función del store que hace la subida
+    await updatePhotoProfile(selectedFile, user._id);
+  };
+  
   return (
-    <div className="bg-white border border-slate-200 h-auto p-4 
-                    flex flex-col items-center justify-between shadow-xl rounded-lg">
+    <div className="bg-white border border-slate-200 h-auto p-4 flex flex-col items-center justify-between shadow-xl rounded-lg">
 
       <div>
         <img
@@ -16,6 +28,16 @@ const CardProfileEstudiante = () => {
           height={120}
         />
       </div>
+
+      <input type="file" onChange={handleFileChange} accept="image/*" />
+
+      <button
+        onClick={handleUpload}
+        disabled={!selectedFile}
+        className="mt-2 bg-blue-500 text-white px-4 py-1 rounded disabled:opacity-50"
+      >
+        Subir Foto
+      </button>
 
       <div className="self-start mt-4">
         <b>Nombre:</b>
