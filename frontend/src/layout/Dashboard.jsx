@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router'
 import storeAuth from '../context/storeAuth'
 import storeProfile from '../context/storeProfile'
-import Sidebar from '../layout/Sidebar'
+import Slidebar from './Slidebar'
 
 const Dashboard = () => {
   const location = useLocation()
@@ -15,7 +15,7 @@ const Dashboard = () => {
   return (
     <div className="relative min-h-screen bg-gray-100">
 
-      {menuVisible && <Sidebar setMenuVisible={setMenuVisible} />}
+      {menuVisible && <Slidebar setMenuVisible={setMenuVisible} />}
 
       {/* Barra superior */}
       <div className="bg-gray-900 py-2 px-4 flex justify-between items-center">
@@ -31,7 +31,7 @@ const Dashboard = () => {
 
     <div className="flex items-center gap-4">
       <span className="text-md font-semibold text-slate-100">
-        Usuario - {user?.nombreAdministrador || user?.nombreDocente}
+        Usuario - {user?.nombreAdministrador || user?.nombreDocente || user?.nombreEstudiante}
       </span>
       <img
         src="https://static.vecteezy.com/system/resources/previews/036/280/651/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg"
@@ -48,7 +48,6 @@ const Dashboard = () => {
       </button>
     </div>
   </div>
-
 
       {/* Contenido principal */}
       <div
