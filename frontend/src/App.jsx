@@ -85,8 +85,10 @@ function App() {
       </BrowserRouter>
 
       {/* Toasts globales */}
-      <ToastContainer position="top-right" autoClose={4000} />
-    </>
+      <ToastContainer position="top-right" 
+      autoClose={3000}
+      closeOnClick />
+      </>
   );
 }
 
