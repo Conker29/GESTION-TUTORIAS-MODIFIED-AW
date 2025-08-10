@@ -124,7 +124,7 @@ const actualizarDocente = async(req,res)=>{
 }
 
 const loginDocente = async(req,res)=>{
-    const {email:emailDocente,password:passwordDocente} = req.body
+    const {email:emailDocente, password:passwordDocente} = req.body
     if (Object.values(req.body).includes("")) return res.status(404).json({
       msg:"Lo sentimos, debes llenar todos los campos"})
     const docenteBDD = await Docente.findOne({emailDocente})
@@ -132,7 +132,6 @@ const loginDocente = async(req,res)=>{
     const verificarPassword = await docenteBDD.matchPassword(passwordDocente)
     if(!verificarPassword) return res.status(404).json({msg:"Lo sentimos, el password no es el correcto"})
     const token = crearTokenJWT(docenteBDD._id,docenteBDD.rol)
-    console.log("Token generado:", token);
 	  const {_id,rol} = docenteBDD
     res.status(200).json({
         token,
@@ -164,4 +163,5 @@ export{
     actualizarDocente,
     loginDocente,
     perfilDocente
+
 }
