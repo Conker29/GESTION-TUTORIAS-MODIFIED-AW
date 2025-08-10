@@ -50,6 +50,13 @@ const estudiantesSchema = new Schema({
         type: String,
         default: "Estudiante"
     },
+    fotoPerfil: {
+    type: String,
+    default: "https://cdn-icons-png.flaticon.com/512/4715/4715329.png"  //Enviar un icono por defecto
+    },
+    fotoPerfilID: { // ID de Cloudinary para poder eliminarla/reemplazarla
+    type: String
+    }
 }, {
     timestamps: true,
 })
