@@ -20,12 +20,26 @@ const storeProfile = create((set) => ({
   profile: async () => {
     try {
       const storedUser = JSON.parse(localStorage.getItem("auth-token"));
-      const endpoint =
-        storedUser.state.rol === "Administrador" ? "perfil" : "docente/perfil";
+      let endpoint = ''
+      if (storedUser.state.rol === "Administrador") {
+        endpoint = "perfil"
+      } 
+      else if (storedUser.state.rol === "Docente") {
+        endpoint = "docente/perfil"}
+      else if (storedUser.state.rol === "Estudiante") {
+        endpoint = "estudiante/perfil"
+      }
+      
       const url = `${import.meta.env.VITE_BACKEND_URL}/${endpoint}`;
 
       const respuesta = await axios.get(url, getAuthHeaders());
-      set({ user: respuesta.data });
+      // Normalizar user para que siempre tenga rol
+      const data = respuesta.data;
+      const userConRol = {
+      ...data,
+      rol: data.rol || storedUser.state.rol || "Estudiante",
+      };
+      set({ user: userConRol });
     } catch (error) {
       console.log(error);
     }
