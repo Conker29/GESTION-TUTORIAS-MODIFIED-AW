@@ -1,30 +1,30 @@
-import storeProfile from "../../context/storeProfile"
-import { useState } from "react"
-import { FaUserCircle, FaEnvelope, FaPhoneAlt, FaChalkboardTeacher, FaCalendarAlt, FaIdCard, FaSchool, FaBuilding } from "react-icons/fa"
-import { MdEdit } from "react-icons/md"
+import storeProfile from "../../context/storeProfile";
+import { useState } from "react";
+import { FaUserCircle, FaEnvelope, FaPhoneAlt, FaChalkboardTeacher, FaCalendarAlt, FaIdCard, FaSchool, FaBuilding } from "react-icons/fa";
+import { MdEdit } from "react-icons/md";
 
 export const CardProfileDocente = () => {
-    const { user, updatePhotoProfile } = storeProfile()
-    const [selectedFile, setSelectedFile] = useState(null)
+    const { user, updatePhotoProfile } = storeProfile();
+    const [selectedFile, setSelectedFile] = useState(null);
 
     const handleFileChange = (e) => {
-        setSelectedFile(e.target.files[0])
-    }
+        setSelectedFile(e.target.files[0]);
+    };
 
     const handleUpload = async () => {
-        if (!selectedFile) return
-        await updatePhotoProfile(selectedFile, user._id)
-        setSelectedFile(null)
-    }
+        if (!selectedFile) return;
+        await updatePhotoProfile(selectedFile, user._id);
+        setSelectedFile(null);
+    };
 
     const formatDate = (dateString) => {
-        if (!dateString) return "No disponible"
-        const date = new Date(dateString)
-        const day = String(date.getUTCDate()).padStart(2, '0')
-        const month = String(date.getUTCMonth() + 1).padStart(2, '0')
-        const year = date.getUTCFullYear()
-        return `${year}-${month}-${day}`
-    }
+        if (!dateString) return "No disponible";
+        const date = new Date(dateString);
+        const day = String(date.getUTCDate()).padStart(2, '0');
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const year = date.getUTCFullYear();
+        return `${year}-${month}-${day}`;
+    };
 
     return (
         <div className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-lg hover:shadow-2xl transition-shadow duration-300 rounded-2xl p-8 max-w-lg mx-auto my-8 flex flex-col items-center relative">
@@ -68,40 +68,50 @@ export const CardProfileDocente = () => {
             </div>
 
             <h2 className="text-4xl font-extrabold text-gray-800 mb-2">{user.nombreDocente}</h2>
-            <p className="text-sm font-light text-gray-500 mb-6">Docente de la ESFOT</p>
+            
+            <div className="flex items-center space-x-2 text-gray-500 mb-6">
+                 <FaBuilding />
+                 <p className="text-lg">{user.oficinaDocente}</p>
+            </div>
 
             <div className="w-full border-t border-gray-200 my-4"></div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full text-gray-700">
-                <div className="flex items-center space-x-2">
-                    <FaCalendarAlt className="text-gray-500" />
-                    <p><b>Fecha de Nacimiento:</b> {formatDate(user.fechaNacimientoDocente)}</p>
+            {/* Seccion con los detalles del docente */}
+            <div className="w-full space-y-4 text-gray-700">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-center space-x-2">
+                        <FaCalendarAlt className="text-gray-500" />
+                        <p><b>Fecha de Nacimiento:</b> {formatDate(user.fechaNacimientoDocente)}</p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <FaIdCard className="text-gray-500" />
+                        <p><b>Cédula:</b> {user.cedulaDocente}</p>
+                    </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                    <FaIdCard className="text-gray-500" />
-                    <p><b>Cédula:</b> {user.cedulaDocente}</p>
-                </div>
-                <div className="flex items-center space-x-2">
-                    <FaBuilding className="text-gray-500" />
-                    <p><b>Oficina:</b> {user.oficinaDocente}</p>
-                </div>
-                <div className="flex items-center space-x-2">
-                    <FaEnvelope className="text-gray-500" />
-                    <p><b>Email:</b> {user.emailDocente}</p>
-                </div>
-                <div className="flex items-center space-x-2">
-                    <FaPhoneAlt className="text-gray-500" />
-                    <p><b>Celular:</b> {user.celularDocente}</p>
-                </div>
-                <div className="flex items-center space-x-2">
-                    <FaSchool className="text-gray-500" />
-                    <p><b>Semestre Asignado:</b> {user.semestreAsignado}</p>
-                </div>
-                <div className="flex items-center space-x-2">
-                    <FaChalkboardTeacher className="text-gray-500" />
-                    <p><b>Asignaturas:</b> {user.asignaturas}</p>
+
+                <div className="grid grid-cols-1 gap-4">
+                    <div className="flex items-center space-x-2">
+                        <FaEnvelope className="text-gray-500" />
+                        <p><b>Email:</b> {user.emailDocente}</p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <FaEnvelope className="text-gray-500" />
+                        <p><b>Email Alternativo:</b> {user.emailAlternativoDocente}</p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <FaPhoneAlt className="text-gray-500" />
+                        <p><b>Celular:</b> {user.celularDocente}</p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <FaSchool className="text-gray-500" />
+                        <p><b>Semestre Asignado:</b> {user.semestreAsignado}</p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <FaChalkboardTeacher className="text-gray-500" />
+                        <p><b>Asignaturas:</b> {user.asignaturas}</p>
+                    </div>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
