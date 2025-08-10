@@ -7,17 +7,16 @@ const FormularioPerfil = () => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm()
 
     const updateUser = async(data) => {
-        updateProfile(data,user._id)
+        updateProfile(data,user._id, user.rol)
     }
 
     useEffect(() => {
         if (user) {
             reset({
-                // Si es un docente, usa user.nombreDocente, si es un administrador, usa user.nombreAdministrador
-                nombre: user?.nombreDocente || user?.nombreAdministrador, 
-                // Si es un docente, usa user.emailDocente, si es un administrador, usa user.email
-                email: user?.emailDocente || user?.email,             
+            nombreAdministrador: user?.nombreDocente || user?.nombreAdministrador,
+            email: user?.emailDocente || user?.email,
             })
+
         }
     }, [user])
 
@@ -29,7 +28,7 @@ const FormularioPerfil = () => {
                     type="text"
                     placeholder="Ingresa tu nombre"
                     className="block w-full rounded-md border border-gray-300 py-1 px-2 text-gray-500 mb-5"
-                    {...register("nombre", { required: "El nombre es obligatorio" })}
+                    {...register("nombreAdministrador", { required: "El nombre es obligatorio" })}
                 />
                 {errors.nombre && <p className="text-red-800">{errors.nombre.message}</p>}
             </div>
