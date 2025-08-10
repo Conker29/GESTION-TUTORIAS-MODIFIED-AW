@@ -12,14 +12,12 @@ function useFetch() {
             if (!(data instanceof FormData)) {
                 finalHeaders["Content-Type"] = "application/json";
             }
-
             const options = {
-                method,
+                method: typeof method === 'string' ? method.toLowerCase() : 'get',
                 url,
                 headers: finalHeaders,
                 data,
             };
-
             const response = await axios(options);
             toast.dismiss(loadingToast);
             toast.success(response?.data?.msg);
