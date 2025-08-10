@@ -34,9 +34,12 @@ const Dashboard = () => {
         Usuario - {user?.nombreAdministrador || user?.nombreDocente || user?.nombreEstudiante}
       </span>
       <img
-        src="https://static.vecteezy.com/system/resources/previews/036/280/651/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg"
+        src={
+          user?.fotoPerfil || 
+          "https://static.vecteezy.com/system/resources/previews/036/280/651/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg"
+        }
         alt="img-client"
-        className="border-2 border-green-600 rounded-full"
+        className="border-2 border-green-600 rounded-full object-cover"
         width={50}
         height={50}
       />
@@ -57,8 +60,6 @@ const Dashboard = () => {
         >
         <Outlet />
         </div>
-
-
       {/* Footer */}
       <div className="bg-gray-800 h-12">
         <p className="text-center text-slate-100 leading-[2.9rem] underline">
