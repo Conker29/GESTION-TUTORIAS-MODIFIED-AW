@@ -10,7 +10,7 @@ const registrarAdministrador = async () => {
     const admin = await Administrador.findOne({ email: "danna.lopez@epn.edu.ec" });
 
     if (!admin) {
-	const passwordGenerada = "Admin12345678$"
+        const passwordGenerada = "Admin12345678$";
         const nuevoAdmin = new Administrador({
             nombreAdministrador: "Danna",
             email: "danna.lopez@epn.edu.ec",
@@ -26,7 +26,6 @@ const registrarAdministrador = async () => {
     }
 };
 
-//Etapa 2
 const recuperarPasswordAdministrador = async(req, res) => {
     //Primera validacion: Obtener el email 
     const {email} = req.body
@@ -102,7 +101,7 @@ const loginAdministrador = async (req, res) => {
 
     if (!verificarPassword) return res.status(401).json({msg: "Lo sentimos, la contraseña es incorrecta."})
     //3
-    const{nombreAdministrador, _id, rol} = administradorBDD
+    const{nombreAdministrador, _id, rol, fotoPerfilAdmin} = administradorBDD
     const token = crearTokenJWT(administradorBDD._id,administradorBDD.rol)
 
     //4: Enviar los siguientes campos al frontend
@@ -111,7 +110,8 @@ const loginAdministrador = async (req, res) => {
         rol,
         nombreAdministrador,
         _id,
-        email: administradorBDD.email
+        email: administradorBDD.email,
+        fotoPerfilAdmin
     })
 }
 
@@ -159,8 +159,8 @@ const actualizarPerfilAdministrador = async (req, res) => {
       { folder: "Administradores" }
     );
 
-    administradorBDD.fotoPerfil = secure_url;
-    administradorBDD.fotoPerfilID = public_id;
+    administradorBDD.fotoPerfilAdmin = secure_url;
+    administradorBDD.fotoPerfilAdminID = public_id;
 
     // Eliminar archivo temporal
     await fs.unlink(req.files.imagen.tempFilePath);
@@ -194,7 +194,3 @@ export {
     actualizarPerfilAdministrador,
     actualizarPasswordAdministrador
 }
-
-
-
-
