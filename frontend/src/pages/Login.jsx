@@ -17,7 +17,7 @@ const Login = () => {
   const loginUser = async (data) => {
     let url = ''
     let body = {}
-    // Si la contraseña incluye "ESFOT", forzar que sea docente (ignorar selector rol)
+    //Si la contraseña incluye "ESFOT", forzar que sea docente
     if (data.password.includes("ESFOT") && rolSeleccionado === 'Docente') {
       url = `${import.meta.env.VITE_BACKEND_URL}/docente/login`;
       body = {
@@ -192,3 +192,4 @@ const Login = () => {
 };
 
 export default Login;
+
