@@ -12,19 +12,22 @@ export const CardProfileOwner = () => {
                 <img src="https://marketup.com/wp-content/themes/marketup/assets/icons/perfil-vazio.jpg" alt="img-client" className="m-auto " width={120} height={120} />
             </div>
             <div className="self-start">
-                <b>Nombre del Docente:</b><p className="inline-block ml-3">{user.nombreDocente}</p>
+                <b>Nombre:</b><p className="inline-block ml-3">{user.nombreDocente}</p>
             </div>
             <div className="self-start">
-                <b>Cédula del Docente:</b><p className="inline-block ml-3">{user.cedulaDocente}</p>
+                <b>Fecha de nacimiento: </b><p className="inline-block ml-3">{user.fechaNacimientoDocente}</p>
             </div>
             <div className="self-start">
-                <b>Email del Docente:</b><p className="inline-block ml-3">{user.emailDocente}</p>
+                <b>Cédula:</b><p className="inline-block ml-3">{user.cedulaDocente}</p>
+            </div>
+            <div className="self-start">
+                <b>Email:</b><p className="inline-block ml-3">{user.emailDocente}</p>
             </div>
             <div className="self-start">
                 <b>Email Alternativo:</b><p className="inline-block ml-3">{user.emailAlternativoDocente}</p>
             </div>
             <div className="self-start">
-                <b>Celular del Docente:</b><p className="inline-block ml-3">{user.celularDocente}</p>
+                <b>Celular:</b><p className="inline-block ml-3">{user.celularDocente}</p>
             </div>
             <div className="self-start">
                 <b>Semestre Asignado:</b><p className="inline-block ml-3">{user.semestreAsignado}</p>
