@@ -56,25 +56,23 @@ const registrarDocente = async (req, res) => {
 const listarDocentes = async (req, res) => {
   try {
     if (req.administradorBDD) {
-      //El administrador ve todos los docentes asociados a él
       const docentes = await Docente.find({ estadoDocente: true, administrador: req.administradorBDD._id })
         .select("-salida -createdAt -updatedAt -__v");
-      return res.status(200).json(docentes);
+      return res.status(200).json({ docentes });
     }
 
     if (req.estudianteBDD) {
-      //El estudiante ve todos los docentes activos sin filtrar por administrador
       const docentes = await Docente.find({ estadoDocente: true })
         .select("-salida -createdAt -updatedAt -__v");
-      return res.status(200).json(docentes);
+      return res.status(200).json({ docentes });  
     }
 
-    //Validar para que solo usuarios autenticados puedan ver los docentes
     return res.status(403).json({ msg: "No autorizado para ver docentes" });
   } catch (error) {
     return res.status(500).json({ msg: "Error al listar docentes", error });
   }
 };
+
 
 const detalleDocente = async(req,res)=>{
     const {id} = req.params
