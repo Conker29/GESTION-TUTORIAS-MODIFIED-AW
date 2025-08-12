@@ -1,4 +1,4 @@
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import useFetch from '../hooks/useFetch';
 import { useNavigate, useParams } from 'react-router';
@@ -9,31 +9,41 @@ const Reset = () => {
   const { fetchDataBackend } = useFetch();
   const { token } = useParams();
   const navigate = useNavigate();
-  const [tokenback, setTokenBack] = useState(false);
+  const [tokenValid, setTokenValid] = useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm();
 
-  const changePassword = (data) => {
+  const changePassword = async (data) => {
+    if(data.password !== data.confirmpassword){
+      toast.error("Las contraseñas no coinciden");
+      return;
+    }
     const url = `${import.meta.env.VITE_BACKEND_URL}/nuevopassword/${token}`;
-    fetchDataBackend(url, data, 'POST');
-    setTimeout(() => {
-      if (data.password === data.confirmpassword) {
+    const response = await fetchDataBackend(url, data, 'POST');
+
+    if(response?.msg){
+      toast.success(response.msg);
+      setTimeout(() => {
         navigate('/login');
-      }
-    }, 3000);
+      }, 3000);
+    }
   };
 
   useEffect(() => {
     const verifyToken = async () => {
       const url = `${import.meta.env.VITE_BACKEND_URL}/recuperarpassword/${token}`;
-      fetchDataBackend(url, null, 'GET');
-      setTokenBack(true);
+      const response = await fetchDataBackend(url, null, 'GET');
+
+      if(response?.msg){
+        setTokenValid(true);
+      } else {
+        toast.error(response?.msg || 'Token inválido');
+      }
     };
     verifyToken();
-  }, []);
+  }, [token, fetchDataBackend]);
 
   return (
     <div className="relative min-h-screen flex flex-col">
-      {/* Fondo: imagen + overlay */}
       <div className="absolute inset-0 -z-10">
         <img
           src={estudiantesFont}
@@ -45,61 +55,50 @@ const Reset = () => {
 
       <ToastContainer />
 
-      {/* Contenedor principal con fondo transparente */}
       <div className="flex flex-col items-center justify-center flex-grow px-4 py-10">
-
-        {tokenback && (
-          <form className="w-full max-w-sm bg-white bg-opacity-90 rounded-lg p-6 shadow-lg" onSubmit={handleSubmit(changePassword)}>
-                <h1 className="text-3xl font-semibold mb-2 text-center text-red-900">
-                    Bienvenido nuevamente!
-                </h1>
-                <small className="text-gray-400 block my-4 text-sm text-center">
-                    Ingrese los datos para cambiar su contraseña
-                </small>
+        {tokenValid ? (
+          <form
+            className="w-full max-w-sm bg-white bg-opacity-90 rounded-lg p-6 shadow-lg"
+            onSubmit={handleSubmit(changePassword)}
+          >
+            <h1 className="text-3xl font-semibold mb-2 text-center text-red-900">
+              Bienvenido nuevamente!
+            </h1>
+            <small className="text-gray-400 block my-4 text-sm text-center">
+              Ingrese los datos para cambiar su contraseña
+            </small>
             <div className="mb-4">
-              <label className="mb-2 block text-sm font-semibold">
-                Nueva contraseña
-              </label>
+              <label className="mb-2 block text-sm font-semibold">Nueva contraseña</label>
               <input
                 type="password"
                 placeholder="Ingresa tu nueva contraseña"
                 className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
-                {...register("password", { required: "La contraseña es obligatoria", 
-                    minLength: {
-                    value: 8,
-                    message: "La contraseña debe tener al menos 8 caracteres"
-                    },
-                    pattern: {
-                    value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, 
-                    message: "La contraseña debe incluir letras y números"
-                    }
+                {...register("password", {
+                  required: "La contraseña es obligatoria",
+                  minLength: { value: 8, message: "Debe tener al menos 8 caracteres" },
+                  pattern: {
+                    value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
+                    message: "Debe incluir letras y números",
+                  },
                 })}
               />
-              {errors.password && (
-                <p className="text-red-800">{errors.password.message}</p>
-              )}
+              {errors.password && <p className="text-red-800">{errors.password.message}</p>}
 
-              <label className="mt-4 mb-2 block text-sm font-semibold">
-                Confirmar contraseña
-              </label>
+              <label className="mt-4 mb-2 block text-sm font-semibold">Confirmar contraseña</label>
               <input
                 type="password"
                 placeholder="Repite tu contraseña"
                 className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
-                {...register("confirmpassword", { required: "La confirmación es obligatoria", 
-                    minLength: {
-                    value: 8,
-                    message: "La contraseña debe tener al menos 8 caracteres"
-                    },
-                    pattern: {
-                    value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, 
-                    message: "La contraseña debe incluir letras y números"
-                    }
-                 })}
+                {...register("confirmpassword", {
+                  required: "La confirmación es obligatoria",
+                  minLength: { value: 8, message: "Debe tener al menos 8 caracteres" },
+                  pattern: {
+                    value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
+                    message: "Debe incluir letras y números",
+                  },
+                })}
               />
-              {errors.confirmpassword && (
-                <p className="text-red-800">{errors.confirmpassword.message}</p>
-              )}
+              {errors.confirmpassword && <p className="text-red-800">{errors.confirmpassword.message}</p>}
             </div>
 
             <div className="mb-3">
@@ -108,6 +107,8 @@ const Reset = () => {
               </button>
             </div>
           </form>
+        ) : (
+          <p className="text-white text-center text-xl">Validando token...</p>
         )}
       </div>
     </div>

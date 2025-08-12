@@ -1,92 +1,76 @@
 import Estudiante from "../models/estudiante.js"
-import {sendMailToRegister, sendMailToRecoveryPassword} from "../config/nodemailer.js"
+import { sendMailToRegister, sendMailToRecoveryPassword } from "../config/nodemailer.js"
 import { crearTokenJWT } from "../middlewares/JWT.js"
-import mongoose from "mongoose" 
+import mongoose from "mongoose"
 import cloudinary from "cloudinary";
 import fs from "fs-extra";
 
-const registroEstudiante = async (req,res)=>{
-    const {emailEstudiante,password} = req.body
-    if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Todos los campos son obligatorios."})
-    const verificarEmailBDD = await Estudiante.findOne({emailEstudiante})
-    if(verificarEmailBDD) return res.status(400).json({msg:"Lo sentimos, el email ya se encuentra registrado"})
-    const nuevoestudiante = new Estudiante(req.body)
-    nuevoestudiante.password = await nuevoestudiante.encrypPassword(password)
-    const token = nuevoestudiante.crearToken()
-    await sendMailToRegister(emailEstudiante,token)
-    await nuevoestudiante.save()
-    res.status(200).json({msg:"Revisa tu correo electrónico para confirmar tu cuenta"})
+const registroEstudiante = async (req, res) => {
+  const { emailEstudiante, password } = req.body;
+  if (Object.values(req.body).includes("")) return res.status(400).json({ msg: "Todos los campos son obligatorios." });
+  const verificarEmailBDD = await Estudiante.findOne({ emailEstudiante });
+  if (verificarEmailBDD) return res.status(400).json({ msg: "Lo sentimos, el email ya se encuentra registrado" });
+  const nuevoestudiante = new Estudiante(req.body);
+  nuevoestudiante.password = await nuevoestudiante.encrypPassword(password);
+  const token = nuevoestudiante.crearToken();
+  await sendMailToRegister(emailEstudiante, token);
+  await nuevoestudiante.save();
+  res.status(200).json({ msg: "Revisa tu correo electrónico para confirmar tu cuenta" });
 }
 
-const confirmarMailEstudiante = async (req,res)=>{
-    if(!(req.params.token)) return res.status(400).json({msg:"Lo sentimos, no se puede validar la cuenta"})
-    const estudianteBDD = await Estudiante.findOne({token:req.params.token})
-    if(!estudianteBDD?.token) return res.status(404).json({msg:"La cuenta ya ha sido confirmada"})
-    estudianteBDD.token = null
-    estudianteBDD.confirmEmail=true
-    await estudianteBDD.save()
-    res.status(200).json({msg:"Token confirmado, ya puedes iniciar sesión"}) 
+const confirmarMailEstudiante = async (req, res) => {
+  if (!(req.params.token)) return res.status(400).json({ msg: "Lo sentimos, no se puede validar la cuenta" });
+  const estudianteBDD = await Estudiante.findOne({ token: req.params.token });
+  if (!estudianteBDD?.token) return res.status(404).json({ msg: "La cuenta ya ha sido confirmada" });
+  estudianteBDD.token = null;
+  estudianteBDD.confirmEmail = true;
+  await estudianteBDD.save();
+  res.status(200).json({ msg: "Token confirmado, ya puedes iniciar sesión" });
 }
 
-//Etapa 1
-const recuperarPasswordEstudiante = async(req, res) => {
-    //Primera validacion: Obtener el email 
-    const {email} = req.body
-    //2: Verificar que el correo electronico no este en blanco
-    if (Object.values(req.body).includes("")) return res.status(404).json({msg: "Todos los campos deben ser llenados obligatoriamente."})
+const recuperarPasswordEstudiante = async (req, res) => {
+  const { email } = req.body;
+  if (Object.values(req.body).includes("")) return res.status(404).json({ msg: "Todos los campos deben ser llenados obligatoriamente." });
 
-    //Verificar que exista el correo electronico en la base de datos
-    const estudianteBDD = await Estudiante.findOne({email})
+  const estudianteBDD = await Estudiante.findOne({ email });
+  if (!estudianteBDD) return res.status(404).json({ msg: "Lo sentimos, el usuario no existe" });
 
-    if (!estudianteBDD) return res.status(404).json({msg: "Lo sentimos, el usuario no existe"})
-    //3
-    const token = estudianteBDD.crearToken()
-    estudianteBDD.token = token
+  const token = estudianteBDD.crearToken();
+  estudianteBDD.token = token;
 
-    //Enviar email
-    await sendMailToRecoveryPassword(email,token)
-    await estudianteBDD.save()
-    //4
-    res.status(200).json({msg: "Revisa tu correo electrónico para restablecer tu contraseña."})
+  await sendMailToRecoveryPassword(email, token);
+  await estudianteBDD.save();
+
+  res.status(200).json({ msg: "Revisa tu correo electrónico para restablecer tu contraseña." });
 }
 
-//Etapa 2
 const comprobarTokenPasswordEstudiante = async (req, res) => {
-    //1
-    const {token} = req.params
-    //2
-    const estudianteBDD = await Estudiante. findOne({token})
-    if (estudianteBDD.token !== token) return res.status (404).json({msg:"Lo sentimos, no se puede validar la cuenta"})
-    //3
-    await estudianteBDD.save()
-    //4
-    res.status(200).json({msg:"Token confirmado ya puedes crear tu password"})
+  const { token } = req.params;
+  const estudianteBDD = await Estudiante.findOne({ token });
+
+  if (!estudianteBDD) return res.status(404).json({ msg: "Lo sentimos, no se puede validar la cuenta" });
+
+  res.status(200).json({ msg: "Token confirmado ya puedes crear tu password" });
 }
 
-//Etapa 3
 const crearNuevoPasswordEstudiante = async (req, res) => {
-    //1
-    const {password,confirmpassword} = req.body
-    //2
-    if (Object.values(req.body).includes("")) return res.status(404).json({msg: "Lo sentimos debes llenar todos los campos"})
-    
-    if (password!== confirmpassword) return res.status(404).json({msg: "Lo sentimos, los passwords no coinciden"})
-    
-    const estudianteBDD = await estudiante.findOne({token:req.params.token})
+  const { password, confirmpassword } = req.body;
 
-    console.log(estudianteBDD);
-    
+  if (Object.values(req.body).includes("")) return res.status(404).json({ msg: "Lo sentimos debes llenar todos los campos" });
 
-    if (estudianteBDD.token !== req.params.token) return res.status(404).json({msg: "Lo sentimos no se puede validar su cuenta"})
+  if (password !== confirmpassword) return res.status(404).json({ msg: "Lo sentimos, los passwords no coinciden" });
 
-    //3
-    estudianteBDD.token = null
-    estudianteBDD.password = await estudianteBDD.encrypPassword(password)
-    await estudianteBDD.save()
+  const estudianteBDD = await Estudiante.findOne({ token: req.params.token });
 
+  if (!estudianteBDD) return res.status(404).json({ msg: "Lo sentimos no se puede validar su cuenta" });
 
-    //4
-    res.status(200).json({msg:"Ya puede iniciar sesion con su nueva contraseña."})
+  if (estudianteBDD.token !== req.params.token) return res.status(404).json({ msg: "Lo sentimos no se puede validar su cuenta" });
+
+  estudianteBDD.token = null;
+  estudianteBDD.password = await estudianteBDD.encrypPassword(password);
+  await estudianteBDD.save();
+
+  res.status(200).json({ msg: "Ya puede iniciar sesion con su nueva contraseña." });
 }
 
 const loginEstudiante = async (req, res) => {
