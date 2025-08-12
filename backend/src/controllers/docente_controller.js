@@ -106,7 +106,8 @@ const eliminarDocente = async (req, res) => {
 const actualizarDocente = async(req,res)=>{
     const {id} = req.params
     if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
-    if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe el docente ${id}`})
+    if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:"Lo sentimos, no existe el docente ${id}"})
+
     if (req.files?.imagen) {
         const docente = await Docente.findById(id)
         if (docente.avatarDocenteID) {
@@ -163,3 +164,4 @@ export{
     loginDocente,
     perfilDocente
 }
+
