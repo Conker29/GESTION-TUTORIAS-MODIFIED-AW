@@ -6,7 +6,8 @@ import {
   listarTutorias,
   registrarAsistencia,
   registrarDisponibilidadDocente,
-  verDisponibilidadDocente
+  verDisponibilidadDocente,
+  bloquesOcupadosDocente
 } from "../controllers/tutorias_controller.js";
 
 import { verificarTokenJWT } from "../middlewares/JWT.js";
@@ -16,6 +17,9 @@ const routerTutorias = Router();
 
 //Ruta para que el estudiante agende, actualice o cancele su tutoria 
 routerTutorias.post("/tutoria/registro", verificarTokenJWT, verificarRol(["Estudiante"]),registrarTutoria);
+
+//Listar todas las tutorías
+routerTutorias.get("/tutorias",verificarTokenJWT,verificarRol(["Docente", "Estudiante"]),listarTutorias);
 
 routerTutorias.put("/tutoria/actualizar/:id",verificarTokenJWT,verificarRol(["Estudiante"]),actualizarTutoria);
 
@@ -30,7 +34,6 @@ routerTutorias.post("/tutorias/registrar-disponibilidad",verificarTokenJWT,verif
 //Ruta para que el docente y estudiante vean la disponibilidad del docente para agendar tutoria
 routerTutorias.get("/ver-disponibilidad-docente/:docenteId", verificarTokenJWT, verificarRol(["Estudiante", "Docente"]), verDisponibilidadDocente);
 
-//Listar todas las tutorías (quizás admin y docente?)
-routerTutorias.get("/tutorias",verificarTokenJWT,verificarRol(["Docente", "Estudiante"]),listarTutorias);
+routerTutorias.get('/tutorias-ocupadas/:docenteId', bloquesOcupadosDocente);
 
 export default routerTutorias;
