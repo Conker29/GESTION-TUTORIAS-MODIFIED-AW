@@ -27,10 +27,9 @@ const Dashboard = () => {
         };
     }, [userMenuRef]);
 
-    const fotoPerfil = user?.fotoPerfil || user?.avatarDocente || user?.fotoPerfilAdmin;
-    const nombreUsuario = user?.nombreAdministrador || user?.nombreDocente || user?.nombreEstudiante;
     const defaultPhotoUrl = "https://static.vecteezy.com/system/resources/previews/036/280/651/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
-
+    const nombreUsuario = user?.nombre || "";
+    const fotoPerfil = user?.fotoPerfil || defaultPhotoUrl;
     return (
         <div className="relative min-h-screen bg-gray-100 overflow-x-hidden">
 
