@@ -20,10 +20,19 @@ const sendMailToRegister = (userMail, token) => {
     html: `
       <div style="font-family: Verdana, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; padding: 20px; text-align: center;">
         <h2 style="color: #81180aff; font-weight: bold;">¡Bienvenido/a!</h2>
-        <p style="font-size: 16px; color: #333;">Para tener acceso a la plataforma y agendar una cita con el docente de tu preferencia, haz clic en el siguiente botón para activar tu cuenta.</p>
-        <a href="${process.env.URL_BACKEND}confirmar/${token}" style="display: inline-block; padding: 12px 24px; margin: 20px 0; font-family: Verdana; font-size: 16px; font-weight: bold; color: #ffffff; background-color: #791515ff; text-decoration: none; border-radius: 10px;">Activar Cuenta</a>
-        <p style="font-size: 14px; color: #777;">Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:</p>
-        <p style="font-size: 12px; color: #1b1a1aff; word-break: break-all;">${process.env.URL_BACKEND}confirmar/${token}</p>
+        <p style="font-size: 16px; color: #333;">
+          Para tener acceso a la plataforma y agendar una cita con el docente de tu preferencia, haz clic en el siguiente botón para activar tu cuenta.
+        </p>
+        <a href="${process.env.URL_FRONTEND}confirm/${token}" 
+           style="display: inline-block; padding: 12px 24px; margin: 20px 0; font-family: Verdana; font-size: 16px; font-weight: bold; color: #ffffff; background-color: #791515ff; text-decoration: none; border-radius: 10px;">
+          Activar Cuenta
+        </a>
+        <p style="font-size: 14px; color: #777;">
+          Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:
+        </p>
+        <p style="font-size: 12px; color: #1b1a1aff; word-break: break-all;">
+          ${process.env.URL_FRONTEND}confirm/${token}
+        </p>
         <hr style="border: 0; border-top: 1px solid #424040ff; margin: 20px 0;">
         <footer style="font-size: 12px; color: #999;">
           <p>&copy; 2025 ESFOT Tutorías. Todos los derechos reservados.</p>
@@ -32,7 +41,7 @@ const sendMailToRegister = (userMail, token) => {
     `,
   };
 
-  transporter.sendMail(mailOptions, function (error, info) {
+  transporter.sendMail(mailOptions, (error) => {
     if (error) {
       console.log(error);
     } else {
@@ -40,6 +49,16 @@ const sendMailToRegister = (userMail, token) => {
     }
   });
 };
+
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Mensaje enviado al correo destinado");
+    }
+  });
+
 
 const sendMailToRecoveryPassword = async (userMail, token) => {
   let info = await transporter.sendMail({

@@ -1,12 +1,16 @@
-import { Link, useParams } from 'react-router';
+import { Link, useParams, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 
 export const Confirm = () => {
   const { token } = useParams();
+  const location = useLocation();
+  
+  const queryParams = new URLSearchParams(location.search);
+  const successParam = queryParams.get('success');
+  const errorParam = queryParams.get('error');
 
-  // Estado para saber si confirmación fue exitosa
   const [confirmado, setConfirmado] = useState(false);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
@@ -27,7 +31,18 @@ export const Confirm = () => {
   };
 
   useEffect(() => {
-    verifyToken();
+    if (successParam === '1') {
+      toast.success('Cuenta confirmada con éxito');
+      setConfirmado(true);
+      setLoading(false);
+    } else if (errorParam === '1') {
+      toast.error('El enlace no es válido o ya fue usado');
+      setErrorMsg('El enlace no es válido o ya fue usado');
+      setConfirmado(false);
+      setLoading(false);
+    } else {
+      verifyToken();
+    }
   }, []);
 
   if (loading) {
@@ -46,11 +61,9 @@ export const Confirm = () => {
     );
   }
 
-  // Si confirmado es true, muestra la pantalla de éxito
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-4">
       <ToastContainer />
-
       <div className="bg-white p-10 md:p-16 rounded-xl shadow-lg text-center max-w-lg">
         <div className="flex flex-col items-center">
           <p className="text-3xl md:text-4xl text-red-900 font-bold mb-4">
@@ -59,7 +72,6 @@ export const Confirm = () => {
           <p className="text-lg text-gray-600 mb-8">
             Tu cuenta ha sido activada con éxito. Ahora puedes iniciar sesión en la plataforma.
           </p>
-
           <Link
             to="/login"
             className="w-full md:w-2/3 p-3 text-center bg-red-900 text-white rounded-xl font-semibold hover:bg-black transition-all duration-300"
