@@ -67,6 +67,9 @@ const AgendarTutorias = () => {
     bloque => bloque.docenteId === docenteSeleccionado?._id
   );
 
+  console.log("Bloques ocupados del docente seleccionado:", bloquesOcupadosDocente);
+  console.log("Disponibilidad:", disponibilidad);
+
   // Cuando se selecciona un docente:
   const manejarAgendarClick = async (docente) => {
     setBloqueSeleccionado(null);
@@ -101,7 +104,7 @@ const AgendarTutorias = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
+      console.log("Tutorías ocupadas recibidas del backend:", dataOcupados);
       const bloques = dataOcupados.map(t => ({
         diaSemana: new Date(t.fecha).toLocaleDateString('es-ES', { weekday: 'long' }).toLowerCase(),
         fecha: t.fecha,
