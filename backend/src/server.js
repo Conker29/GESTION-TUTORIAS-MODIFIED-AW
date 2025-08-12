@@ -1,4 +1,3 @@
-//Importar modulos necesarios
 import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors';
@@ -16,7 +15,13 @@ dotenv.config()
 
 // Configuraciones 
 app.set('port',process.env.port || 3000)
-app.use(cors())
+
+// CORS configurado para frontend específico
+app.use(cors({
+  origin: 'https://gestion-tutorias-modified-aw-1.onrender.com',  // Reemplaza con tu URL frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+}))
 
 app.use(fileUpload({
     useTempFiles : true,
