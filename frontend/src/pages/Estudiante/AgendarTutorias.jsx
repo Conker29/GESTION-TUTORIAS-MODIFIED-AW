@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import CalendarioDocente from "../Docente/CalendarioDocente";
 import "react-toastify/dist/ReactToastify.css";
 
-// Componente Modal básico
+// Modal básico
 const Modal = ({ children, onClose }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
     <div className="bg-white rounded-lg shadow-lg max-w-3xl w-full p-6 relative">
@@ -21,11 +22,13 @@ const Modal = ({ children, onClose }) => (
 );
 
 const AgendarTutorias = () => {
+  const navigate = useNavigate();
   const [docentes, setDocentes] = useState([]);
   const [docenteSeleccionado, setDocenteSeleccionado] = useState(null);
   const [mostrarCalendario, setMostrarCalendario] = useState(false);
   const [disponibilidad, setDisponibilidad] = useState({});
   const [bloqueSeleccionado, setBloqueSeleccionado] = useState(null);
+  const [bloquesOcupados, setBloquesOcupados] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const getToken = () => {
@@ -39,6 +42,7 @@ const AgendarTutorias = () => {
     }
   };
 
+  // Solo carga lista de docentes al montar
   useEffect(() => {
     const fetchDocentes = async () => {
       const token = getToken();
@@ -58,6 +62,12 @@ const AgendarTutorias = () => {
     fetchDocentes();
   }, []);
 
+  // Filtra bloques ocupados solo del docente seleccionado
+  const bloquesOcupadosDocente = bloquesOcupados.filter(
+    bloque => bloque.docenteId === docenteSeleccionado?._id
+  );
+
+  // Cuando se selecciona un docente:
   const manejarAgendarClick = async (docente) => {
     setBloqueSeleccionado(null);
     setDisponibilidad({});
@@ -70,24 +80,45 @@ const AgendarTutorias = () => {
     }
 
     try {
-      const { data } = await axios.get(
+      // Trae disponibilidad
+      const { data: dataDisp } = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/ver-disponibilidad-docente/${docente._id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      const disponibilidadMap = data.disponibilidad.reduce((acc, current) => {
+      const disponibilidadMap = dataDisp.disponibilidad.reduce((acc, current) => {
         acc[current.diaSemana] = current.bloques;
         return acc;
       }, {});
       setDisponibilidad(disponibilidadMap);
+
+      // Trae tutorías ocupadas para ese docente
+      const { data: dataOcupados } = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/tutorias-ocupadas/${docente._id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const bloques = dataOcupados.map(t => ({
+        diaSemana: new Date(t.fecha).toLocaleDateString('es-ES', { weekday: 'long' }).toLowerCase(),
+        fecha: t.fecha,
+        horaInicio: t.horaInicio,
+        horaFin: t.horaFin,
+        docenteId: t.docente,
+      }));
+
+      setBloquesOcupados(bloques);
       setMostrarCalendario(true);
-    } catch {
-      toast.error("Error al cargar la disponibilidad del docente.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error al cargar la disponibilidad o tutorías ocupadas.");
     }
   };
 
+  // Enviar formulario para agendar tutoría
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -112,11 +143,24 @@ const AgendarTutorias = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      toast.success("Tutoría agendada correctamente.");
-      setMostrarCalendario(false);
-      setDocenteSeleccionado(null);
-      setBloqueSeleccionado(null);
-      setDisponibilidad({});
+      toast.success("Tutoría registrada con éxito.");
+
+      // Añade bloque seleccionado a bloques ocupados para que se vea tachado
+      setBloquesOcupados(prev => [
+        ...prev,
+        {
+          ...bloqueSeleccionado,
+          docenteId: docenteSeleccionado._id,
+        },
+      ]);
+
+      setTimeout(() => {
+        setMostrarCalendario(false);
+        setDocenteSeleccionado(null);
+        setBloqueSeleccionado(null);
+        setDisponibilidad({});
+        navigate("/dashboard");
+      }, 4000);
     } catch (error) {
       toast.error(error.response?.data?.msg || "Error al agendar tutoría.");
     } finally {
@@ -155,6 +199,7 @@ const AgendarTutorias = () => {
               readOnly={false}
               bloqueSeleccionado={bloqueSeleccionado}
               onSelectBloque={setBloqueSeleccionado}
+              bloquesOcupados={bloquesOcupadosDocente}
             />
             {bloqueSeleccionado && (
               <div className="mt-4 p-4 border rounded bg-green-50 text-green-900">
@@ -172,7 +217,7 @@ const AgendarTutorias = () => {
         </Modal>
       )}
 
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={5000} />
     </div>
   );
 };
