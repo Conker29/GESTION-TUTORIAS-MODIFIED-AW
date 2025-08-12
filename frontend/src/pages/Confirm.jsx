@@ -1,0 +1,42 @@
+import { Link, useParams } from 'react-router';
+import axios from 'axios';
+import { useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+
+export const Confirm = () => {
+    const { token } = useParams();
+
+    const verifyToken = async () => {
+        try {
+            const url = `${import.meta.env.VITE_BACKEND_URL}/confirmar/${token}`;
+            const respuesta = await axios.get(url);
+            toast.success(respuesta?.data?.msg);
+        } catch (error) {
+            toast.error(error?.response?.data?.msg);
+        }
+    };
+
+    useEffect(() => {
+        verifyToken();
+    }, []);
+
+    return (
+        <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-4">
+            <ToastContainer />
+            
+            <div className="bg-white p-10 md:p-16 rounded-xl shadow-lg text-center max-w-lg">
+                <div className="flex flex-col items-center">
+                    <p className="text-3xl md:text-4xl text-red-900 font-bold mb-4">¡Gracias por confirmar tu cuenta!</p>
+                    <p className="text-lg text-gray-600 mb-8">Tu cuenta ha sido activada con éxito. Ahora puedes iniciar sesión en la plataforma.</p>
+                    
+                    <Link 
+                        to="/login" 
+                        className="w-full md:w-2/3 p-3 text-center bg-red-900 text-white rounded-xl font-semibold hover:bg-black transition-all duration-300"
+                    >
+                        Iniciar sesión
+                    </Link>
+                </div>
+            </div>
+        </div>
+    );
+};
