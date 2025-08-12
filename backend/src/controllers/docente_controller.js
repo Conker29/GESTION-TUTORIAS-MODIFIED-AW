@@ -103,6 +103,7 @@ const eliminarDocente = async (req, res) => {
   res.status(200).json({ msg: "El registro fue deshabilitado con éxito." });
 };
 
+
 const actualizarDocente = async(req,res)=>{
     const {id} = req.params
     if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
@@ -118,8 +119,8 @@ const actualizarDocente = async(req,res)=>{
         req.body.avatarDocenteID = cloudiResponse.public_id;
         await fs.unlink(req.files.imagen.tempFilePath);
     }
-    await Docente.findByIdAndUpdate(id, req.body, { new: true })
-    res.status(200).json({msg:"Se actualizó la información del docente con éxito."})
+    const docenteActualizado = await Docente.findByIdAndUpdate(id, req.body, { new: true }).select("-passwordDocente -confirmEmail -createdAt -updatedAt -__v");
+    res.status(200).json({docente: docenteActualizado})
 }
 
 const loginDocente = async(req,res)=>{
@@ -164,4 +165,5 @@ export{
     loginDocente,
     perfilDocente
 }
+
 
