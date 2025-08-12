@@ -24,7 +24,7 @@ const sendMailToRegister = (userMail, token) => {
         <p style="font-size: 16px; color: #333;">
           Para tener acceso a la plataforma y agendar una cita con el docente de tu preferencia, haz clic en el siguiente botón para activar tu cuenta.
         </p>
-        <a href="${process.env.URL_FRONTEND}confirm/${token}" 
+        <a href="${process.env.URL_BACKEND}confirm/${token}" 
            style="display: inline-block; padding: 12px 24px; margin: 20px 0; font-family: Verdana; font-size: 16px; font-weight: bold; color: #ffffff; background-color: #791515ff; text-decoration: none; border-radius: 10px;">
           Activar Cuenta
         </a>
@@ -32,7 +32,7 @@ const sendMailToRegister = (userMail, token) => {
           Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:
         </p>
         <p style="font-size: 12px; color: #1b1a1aff; word-break: break-all;">
-          ${process.env.URL_FRONTEND}confirm/${token}
+          ${process.env.URL_BACKEND}confirm/${token}
         </p>
         <hr style="border: 0; border-top: 1px solid #424040ff; margin: 20px 0;">
         <footer style="font-size: 12px; color: #999;">
@@ -69,7 +69,7 @@ const sendMailToRecoveryPassword = async (userMail, token) => {
             Si realizaste esta solicitud, haz clic en el siguiente enlace:
           </p>
           <p style="text-align: center; margin: 25px 0;">
-            <a href="${process.env.URL_FRONTEND}reset/${token}" 
+            <a href="${process.env.URL_BACKEND}reset/${token}" 
                style="color: #234c83ff; text-decoration: underline; font-weight: bold;" 
                target="_blank">
               Restablecer Contraseña
@@ -143,3 +143,4 @@ export {
   sendMailToOwner,
   sendMailWithCredentials,
 };
+
