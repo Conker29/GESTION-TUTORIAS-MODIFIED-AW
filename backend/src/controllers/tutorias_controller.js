@@ -1,13 +1,12 @@
 import Tutoria from '../models/tutorias.js';
 import disponibilidadDocente from '../models/disponibilidadDocente.js';
-
+import moment from 'moment'
 // Registrar una nueva tutoría
 const registrarTutoria = async (req, res) => {
   try {
     const { docente, fecha, horaInicio, horaFin } = req.body;
     //Obtener el ID del estudiante 
     const estudiante = req.estudianteBDD?._id;
-
     if (!estudiante) {
       return res.status(401).json({ msg: "Estudiante no autenticado" });
     }
@@ -18,7 +17,14 @@ const registrarTutoria = async (req, res) => {
       fecha,
       horaInicio,
       horaFin,
-      estado: { $in: ['pendiente', 'confirmada'] }
+      estado: { $in: ['pendiente', 'confirmada'] },
+      estado: { $in: ['pendiente', 'confirmada'] },
+      $or: [
+        {
+          horaInicio: { $lt: horaFin },
+          horaFin: { $gt: horaInicio }
+        }
+      ]
     });
 
     if (existe) {
@@ -55,47 +61,54 @@ const registrarTutoria = async (req, res) => {
     await nuevaTutoria.save();
 
     // Eliminar los campos innecesarios para la respuesta
-    const { motivoCancelacion, observacionesDocente, _id, __v, ...tutoria} = nuevaTutoria.toObject();
+    const { motivoCancelacion, observacionesDocente, __v, ...tutoria} = nuevaTutoria.toObject();
 
     res.status(201).json({msg:"Tutoria registrada con éxito!", nuevaTutoria: tutoria});
 
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al crear tutoría.', error });
+    res.status(500).json({ mensaje: 'Error al agendar tutoría.', error });
   }
 };
 
-// Listar todas las tutorías
+//Listar todas las tutorias
 const listarTutorias = async (req, res) => {
   try {
     let filtro = {};
 
-    //Filtrado por rol
+    // Filtrado por rol
     if (req.docenteBDD) {
       filtro.docente = req.docenteBDD._id;
     } else if (req.estudianteBDD) {
       filtro.estudiante = req.estudianteBDD._id;
-    } // Si es admin, ve todo 
+    } 
 
     // Filtros opcionales por query
     const { fecha, estado } = req.query;
 
     if (fecha) {
-      filtro.fecha = fecha; 
+      filtro.fecha = fecha;
+    } else {
+      // Si no envían fecha, filtramos solo tutorías de la semana actual
+      const inicioSemana = moment().startOf('isoWeek').format("YYYY-MM-DD");
+      const finSemana = moment().endOf('isoWeek').format("YYYY-MM-DD");
+
+      filtro.fecha = { $gte: inicioSemana, $lte: finSemana };
     }
 
     if (estado) {
-      filtro.estado = estado; 
+      filtro.estado = estado;
     }
 
     const tutorias = await Tutoria.find(filtro)
-      .populate('estudiante', 'nombre')
-      .populate('docente', 'nombre');
+      .populate("estudiante", "nombreEstudiante")
+      .populate("docente", "nombreDocente");
 
     res.json(tutorias);
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al listar tutorías.', error });
+    res.status(500).json({ mensaje: "Error al listar tutorías.", error });
   }
 };
+
 
 const actualizarTutoria = async (req, res) => {
   try {
@@ -213,10 +226,10 @@ const registrarDisponibilidadDocente = async (req, res) => {
 const verDisponibilidadDocente = async (req, res) => {
   try {
     const { docenteId } = req.params;
-
+    console.log("docenteId recibido:", docenteId);
     // Buscar TODA la disponibilidad semanal del docente
     const disponibilidad = await disponibilidadDocente.find({ docente: docenteId });
-
+    console.log("Disponibilidad encontrada:", disponibilidad);
     if (!disponibilidad || disponibilidad.length === 0) {
       return res.status(404).json({ msg: "El docente no tiene disponibilidad registrada." });
     }
@@ -227,6 +240,38 @@ const verDisponibilidadDocente = async (req, res) => {
   }
 };
 
+const bloquesOcupadosDocente = async (req, res) => {
+  try {
+    const { docenteId } = req.params;
+
+    const inicioSemana = moment().startOf('isoWeek').format("YYYY-MM-DD");
+    const finSemana = moment().endOf('isoWeek').format("YYYY-MM-DD");
+
+    const ocupados = await Tutoria.find({
+      docente: docenteId,
+      fecha: { $gte: inicioSemana, $lte: finSemana },
+      estado: { $in: ['pendiente', 'confirmada'] }
+    }).select("fecha horaInicio horaFin");
+
+    // Convertir la fecha a día de la semana en español
+    const resultado = ocupados.map(o => {
+      const fechaUTC = new Date(o.fecha + 'T05:00:00Z');
+      const diaSemana = fechaUTC.toLocaleDateString('es-EC', { weekday: 'long' }).toLowerCase();
+      return {
+        diaSemana,
+        fecha: o.fecha,
+        horaInicio: o.horaInicio,
+        horaFin: o.horaFin
+      };
+    });
+
+    res.json(resultado);
+  } catch (error) {
+    res.status(500).json({ msg: "Error al obtener bloques ocupados.", error });
+  }
+};
+
+
 export {
   registrarTutoria,
   listarTutorias,
@@ -235,4 +280,5 @@ export {
   registrarAsistencia,
   registrarDisponibilidadDocente,
   verDisponibilidadDocente,
+  bloquesOcupadosDocente
 };
