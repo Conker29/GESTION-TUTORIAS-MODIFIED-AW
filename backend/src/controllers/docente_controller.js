@@ -143,8 +143,8 @@ const actualizarDocente = async (req, res) => {
     await fs.unlink(req.files.imagen.tempFilePath);
   }
   
-  await Docente.findByIdAndUpdate(id, req.body);
-  res.status(200).json({ msg: "Docente actualizado con éxito." });
+  const docenteActualizado = await Docente.findByIdAndUpdate(id, req.body, { new: true }).select("-passwordDocente -confirmEmail -createdAt -updatedAt -__v");
+  res.status(200).json({docente: docenteActualizado})
 };
 
 const loginDocente = async (req, res) => {
@@ -183,3 +183,4 @@ export {
   loginDocente,
   perfilDocente
 };
+
