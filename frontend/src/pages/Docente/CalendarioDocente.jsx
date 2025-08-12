@@ -13,7 +13,7 @@ const obtenerFechaPorDiaSemana = (diaSemana) => {
   };
 
   const hoy = new Date();
-  const diaActual = hoy.getDay(); // Domingo = 0, Lunes = 1, ...
+  const diaActual = hoy.getDay(); 
   const objetivo = diasMap[diaSemana];
 
   let diferencia = objetivo - diaActual;
@@ -42,13 +42,15 @@ const CalendarioDocente = ({
     );
   };
 
+  console.log("Bloques ocupados recibidos:", bloquesOcupados);
   const isOcupado = (bloque) => {
-    return bloquesOcupados.some(
+    const encontrado = bloquesOcupados.some(
       (ocupado) =>
-        ocupado.diaSemana === bloque.diaSemana &&
+        ocupado.diaSemana.toLowerCase() === bloque.diaSemana.toLowerCase() &&
         ocupado.horaInicio === bloque.horaInicio &&
         ocupado.horaFin === bloque.horaFin
     );
+    return encontrado;
   };
 
   return (
