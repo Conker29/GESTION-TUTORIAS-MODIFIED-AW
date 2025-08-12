@@ -14,6 +14,8 @@ let transporter = nodemailer.createTransport({
 });
 
 const sendMailToRegister = (userMail, token) => {
+  const urlConfirmacion = `${process.env.URL_FRONTEND}confirmar/${token}`;
+
   let mailOptions = {
     from: "tutorias.esfot@gmail.com",
     to: userMail,
@@ -24,7 +26,7 @@ const sendMailToRegister = (userMail, token) => {
         <p style="font-size: 16px; color: #333;">
           Para tener acceso a la plataforma y agendar una cita con el docente de tu preferencia, haz clic en el siguiente botón para activar tu cuenta.
         </p>
-        <a href="${process.env.URL_BACKEND}confirm/${token}" 
+        <a href="${urlConfirmacion}" 
            style="display: inline-block; padding: 12px 24px; margin: 20px 0; font-family: Verdana; font-size: 16px; font-weight: bold; color: #ffffff; background-color: #791515ff; text-decoration: none; border-radius: 10px;">
           Activar Cuenta
         </a>
@@ -32,7 +34,7 @@ const sendMailToRegister = (userMail, token) => {
           Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:
         </p>
         <p style="font-size: 12px; color: #1b1a1aff; word-break: break-all;">
-          ${process.env.URL_BACKEND}confirm/${token}
+          ${urlConfirmacion}
         </p>
         <hr style="border: 0; border-top: 1px solid #424040ff; margin: 20px 0;">
         <footer style="font-size: 12px; color: #999;">
@@ -44,9 +46,9 @@ const sendMailToRegister = (userMail, token) => {
 
   transporter.sendMail(mailOptions, (error) => {
     if (error) {
-      console.log(error);
+      console.error("Error enviando correo de confirmación:", error);
     } else {
-      console.log("Mensaje enviado al correo destinado");
+      console.log("Correo de confirmación enviado correctamente");
     }
   });
 };
