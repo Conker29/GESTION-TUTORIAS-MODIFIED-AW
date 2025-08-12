@@ -6,7 +6,8 @@ const Slidebar = ({ setSidebarVisible }) => {
     const location = useLocation();
     const { user } = storeProfile();
     const rol = user?.rol;
-    const nombreUsuario = user?.nombreAdministrador || user?.nombreDocente || user?.nombreEstudiante;
+    
+    const nombreUsuario = user?.nombre || "";
 
     const menuItems = {
         'Administrador': [
